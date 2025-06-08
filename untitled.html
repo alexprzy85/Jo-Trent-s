@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jo Trent, Transport Manager</title>
+    <!-- Tailwind CSS CDN for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Trent's Drains Branding Colors */
+        :root {
+            --trent-blue: #1A365D; /* Dark Blue */
+            --trent-light-blue: #2A63AA; /* Medium Blue */
+            --trent-accent-yellow: #FFD700; /* Gold/Yellow for accents */
+            --trent-white: #FFFFFF;
+            --trent-grey: #F3F4F6; /* Light Grey for backgrounds */
+            --trent-text-dark: #374151; /* Darker text */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--trent-grey);
+            color: var(--trent-text-dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 1rem;
+            box-sizing: border-box;
+            overflow-x: hidden; /* Prevent horizontal scrolling */
+        }
+
+        #game-container {
+            background-color: var(--trent-white);
+            border-radius: 1.5rem; /* More rounded */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            max-width: 90%; /* Responsive width */
+            width: 500px; /* Max width for larger screens */
+            overflow: hidden; /* Ensures rounded corners clip content */
+            display: flex;
+            flex-direction: column;
+            min-height: 700px; /* Ensure sufficient height */
+        }
+
+        #game-header {
+            background-color: var(--trent-blue);
+            color: var(--trent-white);
+            padding: 1rem;
+            text-align: center;
+            font-weight: 700;
+            font-size: 1.5rem;
+            border-top-left-radius: 1.5rem;
+            border-top-right-radius: 1.5rem;
+        }
+
+        #game-stats {
+            display: flex;
+            justify-content: space-around;
+            padding: 0.75rem 1rem;
+            background-color: var(--trent-light-blue);
+            color: var(--trent-white);
+            font-size: 0.9rem;
+            flex-wrap: wrap; /* Allow wrapping on small screens */
+        }
+
+        .stat-item {
+            text-align: center;
+            margin: 0.25rem 0.5rem;
+        }
+
+        .stat-label {
+            font-weight: 600;
+            margin-bottom: 0.1rem;
+        }
+
+        .stat-value {
+            font-size: 1.1rem;
+        }
+
+        #game-area {
+            flex-grow: 1;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        #office-display {
+            background-color: var(--trent-grey);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--trent-text-dark);
+            position: relative; /* For character positioning */
+            overflow: hidden; /* To contain character SVGs if they grow too large */
+        }
+
+        .character-svg {
+            position: absolute; /* Keep absolute for layering, but no movement */
+            height: 80px; /* Adjust size */
+            width: auto;
+            filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.2)); /* Subtle shadow */
+        }
+
+        #jo-svg { bottom: 10px; left: 10px; } /* Fixed at bottom-left */
+        #sam-svg { right: 80px; top: 10px; }
+        #libby-svg { right: 10px; top: 10px; }
+        #phone-svg { left: 10px; top: 10px; }
+        #boss-svg { right: 10px; bottom: 10px; display: none; } /* Boss appears from bottom right */
+
+
+        #big-change-display {
+            background-color: var(--trent-white);
+            border: 1px solid #D1D5DB;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-top: 1rem;
+            min-height: 180px;
+            font-size: 0.9rem;
+            overflow-y: auto; /* Scroll for many jobs */
+            max-height: 200px;
+            display: none; /* Hidden by default */
+        }
+
+        #kevin-keegan-img {
+            max-width: 80px;
+            height: auto;
+            border-radius: 9999px; /* Full circle */
+            border: 2px solid var(--trent-accent-yellow);
+            margin-bottom: 0.5rem;
+        }
+
+        .job-item {
+            background-color: var(--trent-grey);
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .job-item.selected {
+            background-color: var(--trent-accent-yellow);
+            color: var(--trent-blue);
+            font-weight: 600;
+        }
+
+        .engineer-item {
+            background-color: var(--trent-light-blue);
+            color: var(--trent-white);
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            font-size: 0.9rem;
+        }
+
+        .engineer-item.selected {
+            background-color: var(--trent-accent-yellow);
+            color: var(--trent-blue);
+            font-weight: 600;
+        }
+
+
+        #action-buttons {
+            display: flex;
+            flex-wrap: wrap; /* Allow buttons to wrap */
+            justify-content: center;
+            gap: 0.75rem; /* Spacing between buttons */
+            margin-top: 1.5rem;
+        }
+
+        .game-button {
+            background-color: var(--trent-light-blue);
+            color: var(--trent-white);
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.75rem; /* Rounded corners */
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: none;
+            flex: 1 1 auto; /* Allow buttons to grow and shrink */
+            min-width: 120px; /* Minimum width for buttons */
+        }
+
+        .game-button:hover {
+            background-color: var(--trent-blue);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .game-button:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Styling for the phone ring indicator */
+        .phone-ringing {
+            animation: ring 1s infinite;
+        }
+
+        @keyframes ring {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(5deg); }
+            50% { transform: rotate(-5deg); }
+            75% { transform: rotate(5deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        /* Modal styles */
+        .modal {
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: var(--trent-white);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            position: relative;
+        }
+
+        .modal-close-button {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--trent-text-dark);
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .modal-button {
+            background-color: var(--trent-light-blue);
+            color: var(--trent-white);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            border: none;
+        }
+
+        .modal-button.cancel {
+            background-color: #EF4444; /* Red for negative action */
+        }
+
+        .modal-button:hover {
+            background-color: var(--trent-blue);
+        }
+        .modal-button.cancel:hover {
+            background-color: #DC2626;
+        }
+
+        /* Responsive adjustments */
+        @media (min-width: 640px) {
+            #game-container {
+                max-width: 600px;
+            }
+            #game-stats {
+                font-size: 1rem;
+            }
+            .game-button {
+                min-width: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container" class="relative">
+        <div id="game-header">Jo Trent, Transport Manager</div>
+        <div id="game-stats">
+            <div class="stat-item"><div class="stat-label">Time Left</div><div id="time-display" class="stat-value"></div></div>
+            <div class="stat-item"><div class="stat-label">Score</div><div id="score-display" class="stat-value"></div></div>
+            <div class="stat-item"><div class="stat-label">Boss Pressure</div><div id="pressure-display" class="stat-value"></div></div>
+            <div class="stat-item"><div class="stat-label">Sam Attention</div><div id="sam-attention-display" class="stat-value"></div></div>
+            <div class="stat-item"><div class="stat-label">Libby Attention</div><div id="libby-attention-display" class="stat-value"></div></div>
+        </div>
+
+        <div id="game-area">
+            <div id="office-display">
+                <!-- SVG for characters and office elements -->
+                <p id="current-scene-text">You are at your desk. The phone is ringing!</p>
+                <svg id="jo-svg" class="character-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="7" r="4"></circle><path d="M12 11c-2.21 0-4 1.79-4 4v4h8v-4c0-2.21-1.79-4-4-4z"></path>
+                    <path d="M12 11V3"></path> <!-- Hoodie hood -->
+                    <path d="M15 14h-6"></path> <!-- Hoodie arms -->
+                    <path d="M15 17h-6"></path> <!-- Hoodie bottom -->
+                </svg>
+
+                <svg id="sam-svg" class="character-svg hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="7" r="4"></circle><path d="M12 11c-2.21 0-4 1.79-4 4v4h8v-4c0-2.21-1.79-4-4-4z"></path>
+                    <path d="M10 14h4"></path> <!-- Low cut top -->
+                    <path d="M9 17h6"></path> <!-- Short skirt -->
+                </svg>
+
+                <svg id="libby-svg" class="character-svg hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="7" r="4"></circle><path d="M12 11c-2.21 0-4 1.79-4 4v4h8v-4c0-2.21-1.79-4-4-4z"></path>
+                    <path d="M10 14h4"></path> <!-- Low cut top -->
+                    <path d="M9 17h6"></path> <!-- Short skirt -->
+                </svg>
+
+                <svg id="phone-svg" class="character-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-3.71-3.71A19.79 19.79 0 0 1 2 4.18 2 2 0 0 1 4.18 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-1.12 2.3l-.93.63A19.09 19.09 0 0 0 15 15l.63-.93a2 2 0 0 1 2.3-1.12 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                </svg>
+
+                <svg id="boss-svg" class="character-svg hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 17l-4 4-4-4"></path> <!-- Eyebrows -->
+                    <path d="M12 10V3"></path> <!-- Hair part -->
+                    <path d="M6 13a6 6 0 1 0 12 0 6 6 0 1 0-12 0z"></path> <!-- Head -->
+                    <path d="M12 22a7 7 0 0 0 7-7c0-2-2-4-7-4s-7 2-7 4a7 7 0 0 0 7 7z"></path> <!-- Body (suit) -->
+                </svg>
+            </div>
+
+            <div id="big-change-display" class="flex flex-col items-center">
+                <img id="kevin-keegan-img" src="https://placehold.co/150x150/1A365D/FFFFFF?text=Kevin+Keegan" alt="Kevin Keegan on Big Change">
+                <h3 class="text-lg font-bold mb-2 text-center text-trent-blue">Big Change System</h3>
+                <div id="engineer-list" class="grid grid-cols-2 gap-2 mb-4"></div>
+                <div id="job-list"></div>
+                <div class="flex justify-end gap-2 mt-4">
+                    <button id="assign-button" class="game-button hidden">Assign Job</button>
+                    <button id="clear-selection-button" class="game-button hidden">Clear Selection</button>
+                </div>
+            </div>
+
+            <div id="action-buttons">
+                <button id="answer-phone-button" class="game-button">Answer Phone</button>
+                <button id="go-to-desk-button" class="game-button hidden">Go to Desk</button>
+                <button id="talk-to-sam-button" class="game-button">Talk to Sam</button>
+                <button id="talk-to-libby-button" class="game-button">Talk to Libby</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Modal for Alerts -->
+    <div id="game-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="modal-close-button" onclick="closeModal()">&times;</span>
+            <p id="modal-message" class="text-lg font-semibold text-trent-blue mb-4"></p>
+            <div id="modal-choices" class="modal-buttons">
+                <button class="modal-button" onclick="handleModalChoice('ok')">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio Elements -->
+    <!-- IMPORTANT: Replace these with your actual audio files when hosting publicly! -->
+    <!-- Example local path: <source src="./audio/main-music.mp3" type="audio/mpeg"> -->
+    <audio id="main-music" loop preload="auto">
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    <audio id="urgent-music" preload="auto">
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    <audio id="sexy-music" preload="auto">
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    <audio id="button-click-sound" preload="auto">
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <script>
+        // Game state variables
+        let time = 480; // seconds (8 minutes) - INCREASED
+        let score = 0;
+        let bossPressure = 0; // Max 100
+        let samAttention = 0; // Max 100
+        let libbyAttention = 0; // Max 100
+        let phoneRinging = true;
+        let currentScene = 'desk'; // 'desk', 'phone', 'sam', 'libby'
+        let selectedJob = null;
+        let selectedEngineer = null;
+        let gameInterval;
+        let bossCallTimeout;
+        let jobGenerationInterval;
+
+        const ENGINEERS = [
+            { id: 'eng1', name: 'Gary', status: 'Available' },
+            { id: 'eng2', name: 'Dave', status: 'Available' },
+            { id: 'eng3', name: 'Steve', status: 'Available' },
+            { id: 'eng4', name: 'Chris', status: 'Available' }
+        ];
+
+        let jobs = []; // Array of active jobs
+
+        // DOM Elements
+        const timeDisplay = document.getElementById('time-display');
+        const scoreDisplay = document.getElementById('score-display');
+        const pressureDisplay = document.getElementById('pressure-display');
+        const samAttentionDisplay = document.getElementById('sam-attention-display');
+        const libbyAttentionDisplay = document.getElementById('libby-attention-display');
+        const officeDisplay = document.getElementById('office-display');
+        const currentSceneText = document.getElementById('current-scene-text');
+        const bigChangeDisplay = document.getElementById('big-change-display');
+        const engineerListDiv = document.getElementById('engineer-list');
+        const jobListDiv = document.getElementById('job-list');
+        const assignButton = document.getElementById('assign-button');
+        const clearSelectionButton = document.getElementById('clear-selection-button');
+
+        const joSvg = document.getElementById('jo-svg');
+        const samSvg = document.getElementById('sam-svg');
+        const libbySvg = document.getElementById('libby-svg');
+        const phoneSvg = document.getElementById('phone-svg');
+        const bossSvg = document.getElementById('boss-svg');
+
+        const answerPhoneButton = document.getElementById('answer-phone-button');
+        const goToDeskButton = document.getElementById('go-to-desk-button');
+        const talkToSamButton = document.getElementById('talk-to-sam-button');
+        const talkToLibbyButton = document.getElementById('talk-to-libby-button');
+
+        const gameModal = document.getElementById('game-modal');
+        const modalMessage = document.getElementById('modal-message');
+        const modalChoices = document.getElementById('modal-choices');
+
+        // Audio elements
+        const mainMusic = document.getElementById('main-music');
+        const urgentMusic = document.getElementById('urgent-music');
+        const sexyMusic = document.getElementById('sexy-music');
+        const buttonClickSound = document.getElementById('button-click-sound');
+
+        // Set initial volumes
+        mainMusic.volume = 0.4;
+        urgentMusic.volume = 0.6;
+        sexyMusic.volume = 0.5;
+        buttonClickSound.volume = 0.7;
+
+        // --- Audio Control Functions ---
+        function playMainMusic() {
+            urgentMusic.pause();
+            urgentMusic.currentTime = 0;
+            sexyMusic.pause();
+            sexyMusic.currentTime = 0;
+            mainMusic.play().catch(e => console.log("Main music autoplay blocked:", e)); // Catch and log autoplay errors
+        }
+
+        function playUrgentMusic() {
+            mainMusic.pause();
+            sexyMusic.pause();
+            sexyMusic.currentTime = 0;
+            urgentMusic.play().catch(e => console.log("Urgent music autoplay blocked:", e));
+        }
+
+        function playSexyMusic() {
+            mainMusic.pause();
+            urgentMusic.pause();
+            urgentMusic.currentTime = 0;
+            sexyMusic.play().catch(e => console.log("Sexy music autoplay blocked:", e));
+        }
+
+        function playButtonClickSound() {
+            buttonClickSound.currentTime = 0; // Rewind to start for quick successive clicks
+            buttonClickSound.play().catch(e => console.log("Button click sound autoplay blocked:", e));
+        }
+
+        // Attach click sound to all game buttons
+        // This needs to be done AFTER the buttons are rendered or on a general parent element
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.game-button').forEach(button => {
+                button.addEventListener('click', playButtonClickSound);
+            });
+             // Also attach to modal buttons for consistency
+            document.querySelectorAll('.modal-button').forEach(button => {
+                button.addEventListener('click', playButtonClickSound);
+            });
+        });
+
+
+        // --- Game Initialization ---
+        function initGame() {
+            time = 480; // Reset time to 8 minutes
+            score = 0;
+            bossPressure = 0;
+            samAttention = 0;
+            libbyAttention = 0;
+            phoneRinging = true;
+            currentScene = 'desk';
+            selectedJob = null;
+            selectedEngineer = null;
+            jobs = [];
+
+            ENGINEERS.forEach(eng => eng.status = 'Available'); // Reset engineer status
+
+            clearInterval(gameInterval);
+            clearInterval(jobGenerationInterval);
+            clearTimeout(bossCallTimeout);
+
+            updateUI();
+            updateOfficeScene();
+            startPhoneRinging();
+            startGameLoop();
+            startJobGeneration();
+            scheduleBossCalls();
+
+            playMainMusic(); // Start main music on game initialization
+        }
+
+        // --- UI Update Functions ---
+        function updateUI() {
+            timeDisplay.textContent = formatTime(time);
+            scoreDisplay.textContent = score;
+            pressureDisplay.textContent = `${bossPressure}%`;
+            samAttentionDisplay.textContent = `${samAttention}%`;
+            libbyAttentionDisplay.textContent = `${libbyAttention}%`;
+
+            renderEngineers();
+            renderJobs();
+
+            // Button visibility based on current scene and selections
+            assignButton.classList.toggle('hidden', currentScene !== 'desk' || !selectedJob || !selectedEngineer);
+            clearSelectionButton.classList.toggle('hidden', currentScene !== 'desk' || (!selectedJob && !selectedEngineer));
+
+            // Phone ringing animation
+            phoneSvg.classList.toggle('phone-ringing', phoneRinging && currentScene !== 'phone');
+        }
+
+        function updateOfficeScene() {
+            // Hide all characters first
+            joSvg.classList.add('hidden');
+            samSvg.classList.add('hidden');
+            libbySvg.classList.add('hidden');
+            phoneSvg.classList.add('hidden');
+            bossSvg.classList.add('hidden'); // Ensure boss is hidden by default
+
+            // Hide/show Big Change system based on scene
+            bigChangeDisplay.style.display = 'none';
+
+            // Reset selection when changing scenes, unless going to desk to use Big Change
+            if (currentScene !== 'desk') {
+                selectedJob = null;
+                selectedEngineer = null;
+            }
+
+            switch (currentScene) {
+                case 'desk':
+                    currentSceneText.textContent = 'You are at your desk, ready to tackle jobs. The phone is ringing!';
+                    joSvg.classList.remove('hidden');
+                    bigChangeDisplay.style.display = 'flex'; // Show Big Change at desk (flex for Keegan img)
+                    phoneSvg.classList.remove('hidden'); // Phone is always visible from desk
+                    // Action buttons for desk
+                    answerPhoneButton.classList.toggle('hidden', !phoneRinging);
+                    goToDeskButton.classList.add('hidden');
+                    talkToSamButton.classList.remove('hidden');
+                    talkToLibbyButton.classList.remove('hidden');
+                    break;
+                case 'phone':
+                    currentSceneText.textContent = 'You are at the phone, answering a call.';
+                    joSvg.classList.remove('hidden');
+                    phoneSvg.classList.remove('hidden');
+                    answerPhoneButton.classList.add('hidden');
+                    goToDeskButton.classList.remove('hidden'); // Can go back to desk
+                    talkToSamButton.classList.add('hidden');
+                    talkToLibbyButton.classList.add('hidden');
+                    break;
+                case 'sam':
+                    currentSceneText.textContent = 'You are talking to Sam. She seems busy.';
+                    joSvg.classList.remove('hidden');
+                    samSvg.classList.remove('hidden');
+                    answerPhoneButton.classList.add('hidden');
+                    goToDeskButton.classList.remove('hidden');
+                    talkToSamButton.classList.add('hidden');
+                    talkToLibbyButton.classList.add('hidden');
+                    break;
+                case 'libby':
+                    currentSceneText.textContent = 'You are talking to Libby. She gives you a quick smile.';
+                    joSvg.classList.remove('hidden');
+                    libbySvg.classList.remove('hidden');
+                    answerPhoneButton.classList.add('hidden');
+                    goToDeskButton.classList.remove('hidden');
+                    talkToSamButton.classList.add('hidden');
+                    talkToLibbyButton.classList.add('hidden');
+                    break;
+            }
+            updateUI(); // Re-render engineers/jobs as well
+        }
+
+        function renderEngineers() {
+            engineerListDiv.innerHTML = '';
+            ENGINEERS.forEach(eng => {
+                const engDiv = document.createElement('div');
+                engDiv.className = `engineer-item ${selectedEngineer && selectedEngineer.id === eng.id ? 'selected' : ''}`;
+                engDiv.textContent = `${eng.name} (${eng.status})`;
+                if (currentScene === 'desk' && eng.status === 'Available') { // Only clickable if at desk and available
+                    engDiv.onclick = () => selectEngineer(eng);
+                } else {
+                    engDiv.style.opacity = '0.6';
+                    engDiv.style.cursor = 'not-allowed';
+                }
+                engineerListDiv.appendChild(engDiv);
+            });
+        }
+
+        function renderJobs() {
+            jobListDiv.innerHTML = '';
+            if (jobs.length === 0) {
+                jobListDiv.innerHTML = '<p class="text-center text-gray-500">No active jobs. Great work!</p>';
+                return;
+            }
+            jobs.forEach(job => {
+                const jobDiv = document.createElement('div');
+                jobDiv.className = `job-item ${selectedJob && selectedJob.id === job.id ? 'selected' : ''}`;
+                jobDiv.innerHTML = `
+                    <div>
+                        <strong>Job ID: ${job.id}</strong><br>
+                        Location: ${job.location}<br>
+                        Urgency: ${job.urgency}<br>
+                        Time Left: ${formatTime(job.timeLeft)}
+                    </div>
+                `;
+                if (currentScene === 'desk') { // Only clickable if at desk
+                    jobDiv.onclick = () => selectJob(job);
+                } else {
+                    jobDiv.style.opacity = '0.6';
+                    jobDiv.style.cursor = 'not-allowed';
+                }
+                jobListDiv.appendChild(jobDiv);
+            });
+        }
+
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+        }
+
+        // --- Game Logic Functions ---
+
+        function startGameLoop() {
+            gameInterval = setInterval(() => {
+                time--;
+                if (time <= 0) {
+                    clearInterval(gameInterval);
+                    clearInterval(jobGenerationInterval);
+                    clearTimeout(bossCallTimeout);
+                    showModal('Time is up! Game Over!', [{ text: 'Restart', action: 'restart' }]);
+                    return;
+                }
+
+                // Decrease job time left and handle overdue jobs
+                jobs.forEach(job => {
+                    job.timeLeft--;
+                    if (job.timeLeft <= 0) {
+                        handleOverdueJob(job.id);
+                    }
+                });
+
+                // Increase boss pressure over time or if jobs are overdue - SLOWER RATE
+                bossPressure = Math.min(100, bossPressure + Math.floor(jobs.length / 4)); // Pressure increases with more jobs, but slower
+
+                if (bossPressure >= 100) {
+                    clearInterval(gameInterval);
+                    clearInterval(jobGenerationInterval);
+                    clearTimeout(bossCallTimeout);
+                    showModal('Boss Pressure is too high! You got fired! Game Over!', [{ text: 'Restart', action: 'restart' }]);
+                    return;
+                }
+
+                updateUI();
+            }, 1000);
+        }
+
+        function startJobGeneration() {
+            jobGenerationInterval = setInterval(() => {
+                generateNewJob();
+                updateUI();
+            }, 30000); // New job every 30 seconds - INCREASED
+        }
+
+        function generateNewJob() {
+            const newJob = {
+                id: 'JOB' + (jobs.length + 1) + Math.floor(Math.random() * 1000),
+                location: ['Bristol City Centre', 'Portishead', 'Clevedon', 'Clifton', 'Filton'][Math.floor(Math.random() * 5)],
+                urgency: ['High', 'Medium', 'Low'][Math.floor(Math.random() * 3)],
+                timeLeft: 60 + Math.floor(Math.random() * 60) // 60-120 seconds to complete - INCREASED
+            };
+            jobs.push(newJob);
+            showModal(`New Job Alert! ID: ${newJob.id} - Location: ${newJob.location}`, [{ text: 'OK', action: 'ok' }]);
+        }
+
+        function handleOverdueJob(jobId) {
+            jobs = jobs.filter(job => job.id !== jobId);
+            bossPressure = Math.min(100, bossPressure + 10); // Significant pressure increase, slightly reduced
+            score = Math.max(0, score - 15); // Score penalty, slightly reduced
+            showModal(`Job ${jobId} was not completed in time! Boss Pressure increased.`, [{ text: 'OK', action: 'ok' }]);
+            updateUI();
+        }
+
+        function scheduleBossCalls() {
+            bossCallTimeout = setTimeout(() => {
+                phoneRinging = true;
+                // Don't show modal if another modal is already open
+                if (gameModal.classList.contains('hidden')) {
+                    showModal('The phone is ringing furiously! It sounds like a boss!', [{ text: 'Answer Phone', action: 'answerBossCall' }]);
+                }
+                updateUI();
+            }, 45000 + Math.random() * 30000); // Boss calls every 45-75 seconds - INCREASED
+        }
+
+        function selectJob(job) {
+            selectedJob = job;
+            updateUI();
+        }
+
+        function selectEngineer(engineer) {
+            selectedEngineer = engineer;
+            updateUI();
+        }
+
+        // --- Action Handlers ---
+
+        answerPhoneButton.onclick = () => {
+            playButtonClickSound();
+            goToScene('phone');
+            phoneRinging = false;
+            updateUI();
+            handlePhoneCall();
+        };
+
+        goToDeskButton.onclick = () => {
+            playButtonClickSound();
+            goToScene('desk');
+            updateUI();
+        };
+
+        talkToSamButton.onclick = () => {
+            playButtonClickSound();
+            goToScene('sam');
+            updateUI();
+            handleSamInteraction();
+        };
+
+        talkToLibbyButton.onclick = () => {
+            playButtonClickSound();
+            goToScene('libby');
+            updateUI();
+            handleLibbyInteraction();
+        };
+
+        assignButton.onclick = () => {
+            playButtonClickSound();
+            if (selectedJob && selectedEngineer) {
+                assignJob(selectedJob, selectedEngineer);
+            } else {
+                showModal('Please select both a job and an engineer.', [{ text: 'OK', action: 'ok' }]);
+            }
+        };
+
+        clearSelectionButton.onclick = () => {
+            playButtonClickSound();
+            selectedJob = null;
+            selectedEngineer = null;
+            updateUI();
+        };
+
+        function assignJob(job, engineer) {
+            // Check if engineer is actually available
+            const actualEngineer = ENGINEERS.find(e => e.id === engineer.id);
+            if (actualEngineer && actualEngineer.status !== 'Available') {
+                showModal(`${engineer.name} is currently busy! Choose an available engineer.`, [{ text: 'OK', action: 'ok' }]);
+                selectedEngineer = null; // Clear selection
+                updateUI();
+                return;
+            }
+
+            // Assign engineer to job
+            ENGINEERS.find(e => e.id === engineer.id).status = `On Job ${job.id}`;
+            jobs = jobs.filter(j => j.id !== job.id); // Remove job from active list
+
+            score += 50; // Increase score for successful assignment
+            bossPressure = Math.max(0, bossPressure - 5); // Reduce boss pressure
+            time = Math.max(0, time - 8); // Time cost for assignment - SLIGHTLY REDUCED
+
+            selectedJob = null;
+            selectedEngineer = null;
+
+            showModal(`Job ${job.id} assigned to ${engineer.name}! Good work, Jo!`, [{ text: 'OK', action: 'ok' }]);
+            updateUI();
+
+            // Simulate engineer returning after a delay
+            setTimeout(() => {
+                ENGINEERS.find(e => e.id === engineer.id).status = 'Available';
+                showModal(`${engineer.name} has returned and is now available.`, [{ text: 'OK', action: 'ok' }]);
+                updateUI();
+            }, 12000 + Math.random() * 8000); // Engineer returns after 12-20 seconds - SLIGHTLY INCREASED
+        }
+
+        function handlePhoneCall() {
+            bossSvg.classList.remove('hidden'); // Show boss during call
+            playUrgentMusic(); // Play urgent music
+
+            const caller = ['Lewis', 'Mark', 'Ross'][Math.floor(Math.random() * 3)];
+            let message = '';
+            let choices = [];
+
+            switch (caller) {
+                case 'Lewis':
+                    message = "Lewis (big boss) is on the line: 'Jo! Why aren't these jobs moving? My Ferrari isn't paying for itself!'";
+                    choices = [
+                        { text: 'Assure him you are on it', action: 'phoneReplyLewisGood' },
+                        { text: 'Complain about system issues', action: 'phoneReplyLewisBad' }
+                    ];
+                    break;
+                case 'Mark':
+                    message = "Mark (big boss) calls: 'Jo, we have a reputation to uphold! What's the status on the high urgency jobs?'";
+                    choices = [
+                        { text: 'Give a confident update', action: 'phoneReplyMarkGood' },
+                        { text: 'Stammer and say you\'re busy', action: 'phoneReplyMarkBad' }
+                    ];
+                    break;
+                case 'Ross':
+                    message = "Ross (your direct boss) grumbles: 'Jo, new job just came in. Get an engineer on it NOW!'";
+                    choices = [
+                        { text: 'Acknowledge and prioritize', action: 'phoneReplyRossGood' },
+                        { text: 'Tell him you\'re already swamped', action: 'phoneReplyRossBad' }
+                    ];
+                    break;
+            }
+            showModal(message, choices);
+            // Reset boss call timeout after handling the call
+            clearTimeout(bossCallTimeout);
+            scheduleBossCalls();
+        }
+
+        function afterPhoneCall() {
+            bossSvg.classList.add('hidden'); // Hide boss after call
+            goToScene('desk'); // Always return to desk after phone call
+            updateUI();
+            playMainMusic(); // Resume main music
+        }
+
+        function handlePhoneReplyLewisGood() {
+            score += 15;
+            bossPressure = Math.max(0, bossPressure - 10);
+            time = Math.max(0, time - 4); // Time cost for call - SLIGHTLY REDUCED
+            showModal('Lewis seems satisfied. For now.', [{ text: 'OK', action: 'phoneCallEnd' }]);
+        }
+
+        function handlePhoneReplyLewisBad() {
+            score = Math.max(0, score - 10);
+            bossPressure = Math.min(100, bossPressure + 10);
+            time = Math.max(0, time - 4); // Time cost for call - SLIGHTLY REDUCED
+            showModal('Lewis is not happy. Your pressure increased!', [{ text: 'OK', action: 'phoneCallEnd' }]);
+        }
+
+        function handlePhoneReplyMarkGood() {
+            score += 10;
+            bossPressure = Math.max(0, bossPressure - 7);
+            time = Math.max(0, time - 3); // Time cost for call - SLIGHTLY REDUCED
+            showModal('Mark sounds approving. Good job.', [{ text: 'OK', action: 'phoneCallEnd' }]);
+        }
+
+        function handlePhoneReplyMarkBad() {
+            score = Math.max(0, score - 5);
+            bossPressure = Math.min(100, bossPressure + 7);
+            time = Math.max(0, time - 3); // Time cost for call - SLIGHTLY REDUCED
+            showModal('Mark sighs. You feel the pressure rising.', [{ text: 'OK', action: 'phoneCallEnd' }]);
+        }
+
+        function handlePhoneReplyRossGood() {
+            score += 5;
+            bossPressure = Math.max(0, bossPressure - 3);
+            time = Math.max(0, time - 2); // Time cost for call - SLIGHTLY REDUCED
+            showModal('Ross grunts. That means he\'s content.', [{ text: 'OK', action: 'phoneCallEnd' }]);
+        }
+
+        function handlePhoneReplyRossBad() {
+            score = Math.max(0, score - 3);
+            bossPressure = Math.min(100, bossPressure + 3);
+            time = Math.max(0, time - 2); // Time cost for call - SLIGHTLY REDUCED
+            showModal('Ross snorts. He\'ll be watching you.', [{ text: 'OK', action: 'phoneCallEnd' }]);
+        }
+
+        function handleSamInteraction() {
+            playSexyMusic(); // Play sexy music
+            const dialogue = [
+                {
+                    message: "Sam: 'Morning Jo! Got a moment to help me with this spreadsheet? It's really baffling me.'",
+                    choices: [
+                        { text: 'Help her (Spend time)', action: 'samHelp' },
+                        { text: 'Say you\'re too busy', action: 'samBusy' }
+                    ]
+                },
+                {
+                    message: "Sam: 'Ugh, the coffee machine is broken again. Any chance you could look at it, Jo?'",
+                    choices: [
+                        { text: 'Offer to fix it', action: 'samCoffee' },
+                        { text: 'Suggest she call maintenance', action: 'samMaintenance' }
+                    ]
+                },
+                {
+                    message: "Sam: 'That new hoodie looks good on you, Jo. Trent's Drains style!'",
+                    choices: [
+                        { text: 'Blush and thank her', action: 'samBlush' },
+                        { text: 'Make a joke about the uniform', action: 'samJoke' }
+                    ]
+                }
+            ];
+            const randomDialogue = dialogue[Math.floor(Math.random() * dialogue.length)];
+            showModal(randomDialogue.message, randomDialogue.choices);
+        }
+
+        function handleLibbyInteraction() {
+            playSexyMusic(); // Play sexy music
+            const dialogue = [
+                {
+                    message: "Libby: 'Hey Jo. Just admiring your concentration over there. What are you working on?'",
+                    choices: [
+                        { text: 'Explain your work passionately', action: 'libbyWorkExplain' },
+                        { text: 'Give a brief, humble answer', action: 'libbyWorkBrief' }
+                    ]
+                },
+                {
+                    message: "Libby: 'I'm thinking of grabbing lunch, Jo. Anything good around Cater Road?'",
+                    choices: [
+                        { text: 'Suggest a good spot', action: 'libbyLunchSuggest' },
+                        { text: 'Say you haven\'t thought about lunch', action: 'libbyLunchNoIdea' }
+                    ]
+                },
+                {
+                    message: "Libby: 'This music is terrible today. Got any recommendations?'",
+                    choices: [
+                        { text: 'Suggest your favourite band', action: 'libbyMusicBand' },
+                        { text: 'Say you only listen to drain sounds', action: 'libbyMusicDrain' }
+                    ]
+                }
+            ];
+            const randomDialogue = dialogue[Math.floor(Math.random() * dialogue.length)];
+            showModal(randomDialogue.message, randomDialogue.choices);
+        }
+
+        // Sam interaction outcomes
+        function samHelp() {
+            samAttention = Math.min(100, samAttention + 15);
+            time = Math.max(0, time - 8); // Time cost for help - SLIGHTLY REDUCED
+            bossPressure = Math.min(100, bossPressure + 3); // Pressure increase - SLIGHTLY REDUCED
+            showModal('Sam is grateful! But you lost some time.', [{ text: 'OK', action: 'interactionEnd' }]);
+        }
+        function samBusy() {
+            samAttention = Math.max(0, samAttention - 10);
+            showModal('Sam looks a little disappointed. Probably best to focus on work.', [{ text: 'OK', action: 'interactionEnd' }]);
+        }
+        function samCoffee() {
+            samAttention = Math.min(100, samAttention + 20);
+            time = Math.max(0, time - 12); // Time cost for coffee - SLIGHTLY REDUCED
+            bossPressure = Math.min(100, bossPressure + 5); // Pressure increase - SLIGHTLY REDUCED
+            showModal('Sam smiles widely! It took a while though.', [{ text: 'OK', action: 'interactionEnd' }]);
+        }
+        function samMaintenance() {
+            samAttention = Math.max(0, samAttention - 5);
+            showModal('Sam shrugs. No points for you there.', [{ text: 'OK', action: 'interactionEnd' }]);
+        }
+        function samBlush() {
+            samAttention = Math.min(100, samAttention + 10);
+            showModal('Sam giggles. Progress!', [{ text: 'OK', action: 'interactionEnd' }]);
+        }
+        function samJoke() {
+            samAttention = Math.max(0, samAttention - 5);
+            showModal('Sam rolls her eyes. Maybe not the best joke.', [{ text: 'OK', action: 'interactionEnd' }]);
+        }
+
+        // Libby interaction outcomes
+        function libbyWorkExplain() {
+            libbyAttention = Math.min(100, libbyAttention + 10);
+            time = Math.max(0, time - 4); // Time cost - SLIGHTLY REDUCED
+            showModal('Libby seems impressed by your dedication.', [{ text: 'OK', action: 'interactionEnd' }]);
+        }
+        function libbyWorkBrief() {
+            libbyAttention = Math.max(0, libbyAttention - 5);
+            showModal('Libby nods, but her interest wanes.', [{ text: 'OK', action: 'interactionEnd' }]);
+        }
+        function libbyLunchSuggest() {
+            libbyAttention = Math.min(100, libbyAttention + 15);
+            time = Math.max(0, time - 6); // Time cost - SLIGHTLY REDUCED
+            showModal('Libby appreciates the suggestion. You might see her there!', [{ text: 'OK', action: 'interactionEnd' }]);
+        }
+        function libbyLunchNoIdea() {
+            libbyAttention = Math.max(0, libbyAttention - 5);
+            showModal('Libby moves on. You missed a chance.', [{ text: 'OK', action: 'interactionEnd' }]);
+        }
+        function libbyMusicBand() {
+            libbyAttention = Math.min(100, libbyAttention + 10);
+            showModal('Libby is interested! You two might have similar tastes.', [{ text: 'OK', action: 'interactionEnd' }]);
+        }
+        function libbyMusicDrain() {
+            libbyAttention = Math.max(0, libbyAttention - 10);
+            showModal('Libby looks confused, then bored. Try harder next time.', [{ text: 'OK', action: 'interactionEnd' }]);
+        }
+
+        // --- Modal Functions (instead of alert/confirm) ---
+        function showModal(message, choices = [{ text: 'OK', action: 'ok' }]) {
+            modalMessage.textContent = message;
+            modalChoices.innerHTML = '';
+            choices.forEach(choice => {
+                const button = document.createElement('button');
+                button.className = `modal-button ${choice.action === 'restart' ? 'cancel' : ''}`;
+                button.textContent = choice.text;
+                button.onclick = () => {
+                    handleModalChoice(choice.action);
+                };
+                modalChoices.appendChild(button);
+            });
+            gameModal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            gameModal.classList.add('hidden');
+            modalMessage.textContent = '';
+            modalChoices.innerHTML = '';
+        }
+
+        function handleModalChoice(action) {
+            closeModal();
+            switch (action) {
+                case 'ok':
+                    // Do nothing, just close modal
+                    break;
+                case 'restart':
+                    initGame();
+                    break;
+                case 'answerBossCall':
+                    // This action is already triggering handlePhoneCall, no need to re-trigger currentScene
+                    // Phone ringing will stop and boss will appear within handlePhoneCall
+                    break;
+                case 'phoneCallEnd':
+                    afterPhoneCall(); // Hides boss, updates UI, resumes main music
+                    break;
+                case 'interactionEnd':
+                    goToScene('desk'); // Return to desk after social interaction
+                    updateUI();
+                    playMainMusic(); // Resume main music
+                    break;
+                // Add more cases for specific dialogue outcomes
+                case 'phoneReplyLewisGood': handlePhoneReplyLewisGood(); break;
+                case 'phoneReplyLewisBad': handlePhoneReplyLewisBad(); break;
+                case 'phoneReplyMarkGood': handlePhoneReplyMarkGood(); break;
+                case 'phoneReplyMarkBad': handlePhoneReplyMarkBad(); break;
+                case 'phoneReplyRossGood': handlePhoneReplyRossGood(); break;
+                case 'phoneReplyRossBad': handlePhoneReplyRossBad(); break;
+                case 'samHelp': samHelp(); break;
+                case 'samBusy': samBusy(); break;
+                case 'samCoffee': samCoffee(); break;
+                case 'samMaintenance': samMaintenance(); break;
+                case 'samBlush': samBlush(); break;
+                case 'samJoke': samJoke(); break;
+                case 'libbyWorkExplain': libbyWorkExplain(); break;
+                case 'libbyWorkBrief': libbyWorkBrief(); break;
+                case 'libbyLunchSuggest': libbyLunchSuggest(); break;
+                case 'libbyLunchNoIdea': libbyLunchNoIdea(); break;
+                case 'libbyMusicBand': libbyMusicBand(); break;
+                case 'libbyMusicDrain': libbyMusicDrain(); break;
+            }
+        }
+
+        function goToScene(scene) {
+            currentScene = scene;
+            updateOfficeScene();
+        }
+
+        function startPhoneRinging() {
+             // Only start ringing if not already ringing
+             if (!phoneRinging) {
+                phoneRinging = true;
+                updateUI();
+             }
+        }
+
+        // Start the game when the window loads
+        window.onload = initGame;
+
+    </script>
+</body>
+</html>
+
