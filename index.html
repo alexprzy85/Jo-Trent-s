@@ -8,14 +8,15 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Trent's Drains Branding Colors */
+        /* Trent's Drains Branding Colors - Based on image.png */
         :root {
-            --trent-blue: #1A365D; /* Dark Blue */
-            --trent-light-blue: #2A63AA; /* Medium Blue */
-            --trent-accent-yellow: #FFD700; /* Gold/Yellow for accents */
+            --trent-blue: #1A365D; /* Dark Blue from logo/hero */
+            --trent-light-blue: #2A63AA; /* Slightly lighter blue, still deep */
+            --trent-accent-orange: #FF8C00; /* Vibrant orange from image details */
             --trent-white: #FFFFFF;
             --trent-grey: #F3F4F6; /* Light Grey for backgrounds */
             --trent-text-dark: #374151; /* Darker text */
+            --trent-black: #000000;
         }
 
         body {
@@ -34,11 +35,11 @@
 
         #game-container {
             background-color: var(--trent-white);
-            border-radius: 1.5rem; /* More rounded */
+            border-radius: 1.5rem;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-            max-width: 90%; /* Responsive width */
+            max-width: 90%; /* Max width for mobile */
             width: 500px; /* Max width for larger screens */
-            overflow: hidden; /* Ensures rounded corners clip content */
+            overflow: hidden;
             display: flex;
             flex-direction: column;
             min-height: 700px; /* Ensure sufficient height */
@@ -53,6 +54,8 @@
             font-size: 1.5rem;
             border-top-left-radius: 1.5rem;
             border-top-right-radius: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
         #game-stats {
@@ -62,7 +65,8 @@
             background-color: var(--trent-light-blue);
             color: var(--trent-white);
             font-size: 0.9rem;
-            flex-wrap: wrap; /* Allow wrapping on small screens */
+            flex-wrap: wrap;
+            border-bottom: 3px solid var(--trent-accent-orange);
         }
 
         .stat-item {
@@ -73,10 +77,12 @@
         .stat-label {
             font-weight: 600;
             margin-bottom: 0.1rem;
+            text-transform: uppercase;
         }
 
         .stat-value {
             font-size: 1.1rem;
+            font-weight: 700;
         }
 
         #game-area {
@@ -99,43 +105,48 @@
             font-size: 1.1rem;
             margin-bottom: 1rem;
             color: var(--trent-text-dark);
-            position: relative; /* For character positioning */
-            overflow: hidden; /* To contain character SVGs if they grow too large */
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #D1D5DB;
         }
 
         .character-svg {
-            position: absolute; /* Keep absolute for layering, but no movement */
-            height: 80px; /* Adjust size */
+            position: absolute;
+            height: 80px;
             width: auto;
-            filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.2)); /* Subtle shadow */
+            filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.2));
+            color: var(--trent-blue);
         }
 
-        #jo-svg { bottom: 10px; left: 10px; } /* Fixed at bottom-left */
-        #sam-svg { right: 80px; top: 10px; }
-        #libby-svg { right: 10px; top: 10px; }
+        #jo-svg { bottom: 10px; left: 10px; }
+        #sam-svg { right: 80px; top: 10px; color: #E57373; }
+        #libby-svg { right: 10px; top: 10px; color: #A1887F; }
         #phone-svg { left: 10px; top: 10px; }
-        #boss-svg { right: 10px; bottom: 10px; display: none; } /* Boss appears from bottom right */
+        #boss-svg { right: 10px; bottom: 10px; display: none; color: var(--trent-black); }
 
 
         #big-change-display {
             background-color: var(--trent-white);
-            border: 1px solid #D1D5DB;
+            border: 1px solid var(--trent-light-blue);
             border-radius: 0.75rem;
             padding: 1rem;
             margin-top: 1rem;
             min-height: 180px;
             font-size: 0.9rem;
-            overflow-y: auto; /* Scroll for many jobs */
+            overflow-y: auto;
             max-height: 200px;
-            display: none; /* Hidden by default */
+            display: none;
+            flex-direction: column;
+            align-items: center;
         }
 
         #kevin-keegan-img {
             max-width: 80px;
             height: auto;
-            border-radius: 9999px; /* Full circle */
-            border: 2px solid var(--trent-accent-yellow);
+            border-radius: 9999px;
+            border: 3px solid var(--trent-accent-orange);
             margin-bottom: 0.5rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
 
         .job-item {
@@ -147,13 +158,20 @@
             justify-content: space-between;
             align-items: center;
             cursor: pointer;
-            transition: background-color 0.2s ease;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            border: 1px solid #E5E7EB;
+        }
+
+        .job-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .job-item.selected {
-            background-color: var(--trent-accent-yellow);
-            color: var(--trent-blue);
+            background-color: var(--trent-accent-orange);
+            color: var(--trent-white);
             font-weight: 600;
+            border-color: var(--trent-blue);
         }
 
         .engineer-item {
@@ -163,37 +181,46 @@
             padding: 0.5rem;
             margin-bottom: 0.5rem;
             cursor: pointer;
-            transition: background-color 0.2s ease;
+            transition: background-color 0.2s ease, transform 0.1s ease;
             font-size: 0.9rem;
+            border: 1px solid var(--trent-blue);
+        }
+
+        .engineer-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .engineer-item.selected {
-            background-color: var(--trent-accent-yellow);
-            color: var(--trent-blue);
+            background-color: var(--trent-accent-orange);
+            color: var(--trent-white);
             font-weight: 600;
+            border-color: var(--trent-blue);
         }
-
 
         #action-buttons {
             display: flex;
-            flex-wrap: wrap; /* Allow buttons to wrap */
+            flex-wrap: wrap;
             justify-content: center;
-            gap: 0.75rem; /* Spacing between buttons */
+            gap: 0.75rem;
             margin-top: 1.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px dashed #D1D5DB;
         }
 
         .game-button {
             background-color: var(--trent-light-blue);
             color: var(--trent-white);
             padding: 0.75rem 1.25rem;
-            border-radius: 0.75rem; /* Rounded corners */
+            border-radius: 0.75rem;
             font-weight: 600;
             cursor: pointer;
             transition: background-color 0.3s ease, transform 0.1s ease, box-shadow 0.3s ease;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             border: none;
-            flex: 1 1 auto; /* Allow buttons to grow and shrink */
-            min-width: 120px; /* Minimum width for buttons */
+            flex: 1 1 auto;
+            min-width: 120px;
+            text-transform: uppercase;
         }
 
         .game-button:hover {
@@ -204,6 +231,13 @@
         .game-button:active {
             transform: translateY(2px);
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .game-button:disabled {
+            background-color: #9CA3AF;
+            cursor: not-allowed;
+            box-shadow: none;
+            opacity: 0.7; /* Make disabled buttons slightly transparent */
         }
 
         /* Styling for the phone ring indicator */
@@ -227,7 +261,7 @@
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
+            background-color: rgba(0, 0, 0, 0.7);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -239,11 +273,19 @@
             background-color: var(--trent-white);
             padding: 2rem;
             border-radius: 1rem;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
             text-align: center;
             max-width: 400px;
             width: 90%;
             position: relative;
+            border: 3px solid var(--trent-blue);
+            max-height: 90vh; /* Control max height on mobile */
+            overflow-y: auto; /* Enable scrolling for content that overflows */
+        }
+
+        #instructions-modal .modal-content {
+            max-height: 80vh; /* Make instructions even shorter */
+            padding: 1.5rem;
         }
 
         .modal-close-button {
@@ -253,7 +295,12 @@
             font-size: 1.5rem;
             cursor: pointer;
             color: var(--trent-text-dark);
+            transition: color 0.2s ease;
         }
+        .modal-close-button:hover {
+            color: var(--trent-accent-orange);
+        }
+
 
         .modal-buttons {
             display: flex;
@@ -271,10 +318,11 @@
             cursor: pointer;
             transition: background-color 0.3s ease;
             border: none;
+            text-transform: uppercase;
         }
 
         .modal-button.cancel {
-            background-color: #EF4444; /* Red for negative action */
+            background-color: #EF4444;
         }
 
         .modal-button:hover {
@@ -295,6 +343,13 @@
             .game-button {
                 min-width: 150px;
             }
+            .modal-content {
+                max-width: 500px; /* Wider on desktop */
+                max-height: 90vh; /* Can be taller on desktop */
+            }
+            #instructions-modal .modal-content {
+                max-height: 80vh; /* Consistent instruction height */
+            }
         }
     </style>
 </head>
@@ -307,12 +362,13 @@
             <div class="stat-item"><div class="stat-label">Boss Pressure</div><div id="pressure-display" class="stat-value"></div></div>
             <div class="stat-item"><div class="stat-label">Sam Attention</div><div id="sam-attention-display" class="stat-value"></div></div>
             <div class="stat-item"><div class="stat-label">Libby Attention</div><div id="libby-attention-display" class="stat-value"></div></div>
+            <div class="stat-item"><div class="stat-label">Asia Happiness</div><div id="asia-happiness-display" class="stat-value"></div></div>
         </div>
 
         <div id="game-area">
             <div id="office-display">
                 <!-- SVG for characters and office elements -->
-                <p id="current-scene-text">You are at your desk. The phone is ringing!</p>
+                <p id="current-scene-text" class="text-center text-lg font-semibold"></p>
                 <svg id="jo-svg" class="character-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="7" r="4"></circle><path d="M12 11c-2.21 0-4 1.79-4 4v4h8v-4c0-2.21-1.79-4-4-4z"></path>
                     <path d="M12 11V3"></path> <!-- Hoodie hood -->
@@ -344,23 +400,25 @@
                 </svg>
             </div>
 
+            <!-- Action buttons are now here, above Big Change -->
+            <div id="action-buttons">
+                <button id="answer-phone-button" class="game-button">Answer Phone</button>
+                <button id="go-to-desk-button" class="game-button">Go to Desk</button>
+                <button id="talk-to-sam-button" class="game-button">Talk to Sam</button>
+                <button id="talk-to-libby-button" class="game-button">Talk to Libby</button>
+            </div>
+
             <div id="big-change-display" class="flex flex-col items-center">
-                <img id="kevin-keegan-img" src="https://placehold.co/150x150/1A365D/FFFFFF?text=Kevin+Keegan" alt="Kevin Keegan on Big Change">
+                <img id="kevin-keegan-img" src="https://placehold.co/150x150/1A365D/FFFFFF?text=KEVIN+KEAGAN" alt="Kevin Keegan on Big Change">
                 <h3 class="text-lg font-bold mb-2 text-center text-trent-blue">Big Change System</h3>
                 <div id="engineer-list" class="grid grid-cols-2 gap-2 mb-4"></div>
                 <div id="job-list"></div>
                 <div class="flex justify-end gap-2 mt-4">
-                    <button id="assign-button" class="game-button hidden">Assign Job</button>
-                    <button id="clear-selection-button" class="game-button hidden">Clear Selection</button>
+                    <button id="assign-button" class="game-button">Assign Job</button>
+                    <button id="clear-selection-button" class="game-button">Clear Selection</button>
                 </div>
             </div>
 
-            <div id="action-buttons">
-                <button id="answer-phone-button" class="game-button">Answer Phone</button>
-                <button id="go-to-desk-button" class="game-button hidden">Go to Desk</button>
-                <button id="talk-to-sam-button" class="game-button">Talk to Sam</button>
-                <button id="talk-to-libby-button" class="game-button">Talk to Libby</button>
-            </div>
         </div>
     </div>
 
@@ -369,15 +427,29 @@
         <div class="modal-content">
             <span class="modal-close-button" onclick="closeModal()">&times;</span>
             <p id="modal-message" class="text-lg font-semibold text-trent-blue mb-4"></p>
-            <div id="modal-choices" class="modal-buttons">
+            <div id="modal-buttons" class="modal-buttons">
                 <button class="modal-button" onclick="handleModalChoice('ok')">OK</button>
             </div>
         </div>
     </div>
 
+    <!-- Instructions Modal -->
+    <div id="instructions-modal" class="modal">
+        <div class="modal-content">
+            <h2 class="text-2xl font-bold text-trent-blue mb-4">Welcome, Jo Trent!</h2>
+            <p class="mb-3 text-left">You're the Transport Manager at **Trent's Drains**. Your day is a chaotic mix of work, office romance, and home duties.</p>
+            <ul class="list-disc list-inside text-left mb-4 text-sm">
+                <li>**Assign Jobs:** Click engineers and jobs on the "Big Change System", then "Assign".</li>
+                <li>**Answer Calls:** The phone will ring for work or personal calls. Answer it to respond.</li>
+                <li>**Office Life:** Chat with Sam & Libby, but mind your work and home duties!</li>
+                <li>**Keep Stats Up:** Manage Time, Score, Boss Pressure, Sam/Libby Attention, and Asia Happiness.</li>
+            </ul>
+            <p id="loading-message" class="font-bold text-trent-blue mb-4 hidden">Please be patient whilst I load the office... getting things ready for you!</p>
+            <button id="start-game-button" class="modal-button">Start Game</button>
+        </div>
+    </div>
+
     <!-- Audio Elements -->
-    <!-- IMPORTANT: Replace these with your actual audio files when hosting publicly! -->
-    <!-- Example local path: <source src="./audio/main-music.mp3" type="audio/mpeg"> -->
     <audio id="main-music" loop preload="auto">
         <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
         Your browser does not support the audio element.
@@ -394,30 +466,179 @@
         <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" type="audio/mpeg">
         Your browser does not support the audio element.
     </audio>
+    <audio id="phone-ring-sound" loop preload="auto">
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    <audio id="personal-call-music" preload="auto">
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
 
     <script>
         // Game state variables
-        let time = 480; // seconds (8 minutes) - INCREASED
+        let time = 480; // seconds (8 minutes)
         let score = 0;
         let bossPressure = 0; // Max 100
         let samAttention = 0; // Max 100
         let libbyAttention = 0; // Max 100
-        let phoneRinging = true;
+        let asiaHappiness = 50; // New stat: Jo's wife's happiness (Max 100)
+        let phoneRinging = false; // Indicates if the phone is physically ringing
+        let incomingCallType = null; // Stores the type of call that's ringing ('boss', 'asia', 'henryk', 'hr_task')
         let currentScene = 'desk'; // 'desk', 'phone', 'sam', 'libby'
         let selectedJob = null;
         let selectedEngineer = null;
         let gameInterval;
-        let bossCallTimeout;
+        let callSchedulingTimeout;
         let jobGenerationInterval;
+
+        // Counters for guaranteed calls
+        let asiaCallsMade = 0;
+        let henrykCallsMade = 0;
+        const ASIA_MIN_CALLS = 4;
+        const HENRYK_MIN_CALLS = 1;
+
 
         const ENGINEERS = [
             { id: 'eng1', name: 'Gary', status: 'Available' },
             { id: 'eng2', name: 'Dave', status: 'Available' },
             { id: 'eng3', name: 'Steve', status: 'Available' },
-            { id: 'eng4', name: 'Chris', status: 'Available' }
+            { id: 'eng4', name: 'Chris', status: 'Available' },
+            { id: 'eng5', name: 'Jordan', status: 'Available' },
+            { id: 'eng6', name: 'Calum', status: 'Available' }
         ];
 
         let jobs = []; // Array of active jobs
+
+        // --- Scenario Data (Comprehensive from GDD) ---
+        // Stored as arrays of objects. `type` property is for internal tracking, not displayed.
+
+        const originalBossScenarios = {
+            Lewis: [
+                { message: "Lewis (big boss) is on the line: 'Jo! Why aren't these jobs moving? My Ferrari isn't paying for itself!'", choices: [{ text: 'Assure him you are on it', action: 'phoneReplyLewisGoodOutcome' }, { text: 'Complain about system issues', action: 'phoneReplyLewisBadOutcome' }] },
+                { message: "Lewis (big boss) calls: 'I've heard some chatter about late reports. Everything under control, Jo?'", choices: [{ text: 'Confirm control', action: 'phoneReplyLewisGoodOutcome' }, { text: 'Admit some delays', action: 'phoneReplyLewisBadOutcome' }] },
+                { message: "Lewis (big boss) on the line: 'Expenses are through the roof. I need a full breakdown of the last quarter's vehicle costs ASAP!'", choices: [{ text: 'Agree immediately', action: 'phoneReplyLewisGoodOutcome' }, { text: 'Plead for more time', action: 'phoneReplyLewisBadOutcome' }] },
+                { message: "Lewis (big boss) asks: 'Any chance of fitting in an urgent VIP job? My cousin's drain is blocked, needs doing today.'", choices: [{ text: 'Prioritize it', action: 'phoneReplyLewisGoodOutcome' }, { text: 'Say no, too busy', action: 'phoneReplyLewisBadOutcome' }] }
+            ],
+            Mark: [
+                { message: "Mark (big boss) calls: 'Jo, we have a reputation to uphold! What's the status on the high urgency jobs?'", choices: [{ text: 'Give a confident update', action: 'phoneReplyMarkGoodOutcome' }, { text: 'Stammer and say you\'re busy', action: 'phoneReplyMarkBadOutcome' }] },
+                { message: "Mark (big boss) calls: 'Just checking in. Profits are down this quarter. Any ideas on efficiency?'", choices: [{ text: 'Suggest cost-cutting', action: 'phoneReplyMarkGoodOutcome' }, { text: 'Blame external factors', action: 'phoneReplyMarkBadOutcome' }] },
+                { message: "Mark (big boss) on the line: 'I'm expecting a client visit later. Make sure the yard looks spotless, understood?'", choices: [{ text: 'Affirm compliance', action: 'phoneReplyMarkGoodOutcome' }, { text: 'Say it\'s not your job', action: 'phoneReplyMarkBadOutcome' }] },
+                { message: "Mark (big boss) asks: 'Heard about that tricky job in Clifton. Are we going to need specialist equipment for it?'", choices: [{ text: 'Confirm readiness', action: 'phoneReplyMarkGoodOutcome' }, { text: 'Express uncertainty', action: 'phoneReplyMarkBadOutcome' }] }
+            ],
+            Ross: [
+                { message: "Ross (your direct boss) grumbles: 'Jo, new job just came in. Get an engineer on it NOW!'", choices: [{ text: 'Acknowledge and prioritize', action: 'phoneReplyRossGoodOutcome' }, { text: 'Tell him you\'re already swamped', action: 'phoneReplyRossBadOutcome' }] },
+                { message: "Ross (your direct boss) calls: 'Jo, I need those Big Change figures for yesterday. Where are they?'", choices: [{ text: 'Say they are ready', action: 'phoneReplyRossGoodOutcome' }, { text: 'Ask for more time', action: 'phoneReplyRossBadOutcome' }] },
+                { message: "Ross (your direct boss) sighs: 'Another engineer called in sick. You'll have to juggle the schedule.'", choices: [{ text: 'Agree to manage', action: 'phoneReplyRossGoodOutcome' }, { text: 'Complain about staffing', action: 'phoneReplyRossBadOutcome' }] },
+                { message: "Ross (your direct boss) asks: 'Did you follow up on that client complaint from yesterday? They're getting impatient.'", choices: [{ text: 'Confirm follow-up', action: 'phoneReplyRossGoodOutcome' }, { text: 'Admit you forgot', action: 'phoneReplyRossBadOutcome' }] }
+            ]
+        };
+
+        const originalHrScenarios = [
+            { type: 'sackMegan', message: "Ross (on the phone): 'Jo, Megan Friday's performance isn't cutting it. Sack her by end of day Friday.'", choices: [{ text: 'Proceed with termination', action: 'hrSackMeganDoItOutcome' }, { text: 'Try to find a way to help her', action: 'hrSackMeganHelpOutcome' }, { text: 'Refuse the instruction', action: 'hrSackMeganRefuseOutcome' }] },
+            { type: 'decreaseKirstyWages', message: "Mark (on the phone): 'Jo, overheads are too high. Kirsty's wages need to be cut 10%. Make it happen quietly.'", choices: [{ text: 'Implement the cut', action: 'hrDecreaseKirstyDoItOutcome' }, { text: 'Suggest alternatives (e.g., bonus cuts)', action: 'hrDecreaseKirstySuggestOutcome' }, { text: 'Refuse the instruction', action: 'hrDecreaseKirstyRefuseOutcome' }] },
+            { type: 'failProbation', message: "Lewis (on the phone): 'Jo, that new starter isn't fitting in. Fail their probation, effective immediately.'", choices: [{ text: 'Process the termination', action: 'hrFailProbationDoItOutcome' }, { text: 'Give them another chance', action: 'hrFailProbationChanceOutcome' }, { text: 'Refuse the instruction', action: 'hrFailProbationRefuseOutcome' }] },
+            { type: 'reprimandGary', message: "Ross (on the phone): 'Gary was caught napping in his van again. Give him a formal reprimand.'", choices: [{ text: 'Issue reprimand', action: 'hrReprimandGaryDoItOutcome' }, { text: 'Suggest a warning instead', action: 'hrReprimandGarySuggestOutcome' }, { text: 'Ignore instruction', action: 'hrReprimandGaryRefuseOutcome' }] }
+        ];
+
+        const originalAsiaScenarios = [
+            { type: 'supermarket', message: "Asia (on personal mobile): 'Jo, can you just quickly pop to the supermarket on the way home?'", choices: [{ text: 'Yes, of course, darling!', action: 'asiaComplySupermarketOutcome' }, { text: 'Later, I\'m swamped!', action: 'asiaDelaySupermarketOutcome' }] },
+            { type: 'wine', message: "Asia (on personal mobile): 'Can you grab some wine on your way home? I'm craving a glass!'", choices: [{ text: 'No problem, Asia.', action: 'asiaComplyWineOutcome' }, { text: 'I really can\'t right now.', action: 'asiaDelayWineOutcome' }] },
+            { type: 'chocolate', message: "Asia (on personal mobile): 'Pick up some chocolate for me? It's been a tough day!'", choices: [{ text: 'Done!', action: 'asiaComplyChocolateOutcome' }, { text: 'Maybe tomorrow.', action: 'asiaDelayChocolateOutcome' }] },
+            { type: 'flowers', message: "Asia (on personal mobile): 'Get me some flowers? Just because, you know.'", choices: [{ text: 'Consider it done.', action: 'asiaComplyFlowersOutcome' }, { text: 'Honey, I\'m busy.', action: 'asiaDelayFlowersOutcome' }] },
+            { type: 'dishes', message: "Asia (on personal mobile): 'Jo, the dishes are piling up. Can you do them when you get home?'", choices: [{ text: 'Sure thing!', action: 'asiaComplyDishesOutcome' }, { text: 'I\'ll try if I have time.', action: 'asiaDelayDishesOutcome' }] },
+            { type: 'school_pickup', message: "Asia (on personal mobile): 'I'm running late! Can you pick Henryk up from school?'", choices: [{ text: 'On my way!', action: 'asiaComplySchoolPickupOutcome' }, { text: 'Can you call someone else?', action: 'asiaDelaySchoolPickupOutcome' }] },
+            { type: 'dry_cleaning', message: "Asia (on personal mobile): 'My dry cleaning needs picking up. Can you swing by?'", choices: [{ text: 'Affirmative', action: 'asiaComplyDryCleaningOutcome' }, { text: 'No time today', action: 'asiaDelayDryCleaningOutcome' }] },
+            { type: 'bin_day', message: "Asia (on personal mobile): 'Jo, is it bin day tomorrow? Did you put the bins out?'", choices: [{ text: 'Confirm bins are out', action: 'asiaComplyBinsOutcome' }, { text: 'Oh, snap! I forgot!', action: 'asiaDelayBinsOutcome' }] }
+        ];
+
+        const originalHenrykScenarios = [
+            { type: 'crayons', message: "School (on phone): 'Mr. Trent, Henryk was found throwing crayons today. We need you to address this.'", choices: [{ text: 'Go to school immediately', action: 'henrykGoToSchoolOutcome' }, { text: 'Talk to him later at home', action: 'henrykTalkLaterOutcome' }, { text: 'Tell school to handle it', action: 'henrykSchoolHandleOutcome' }] },
+            { type: 'talkingBack', message: "School (on phone): 'Mr. Trent, Henryk was talking back to his teacher today. We need your support.'", choices: [{ text: 'Go to school immediately', action: 'henrykGoToSchoolOutcome' }, { text: 'Talk to him later at home', action: 'henrykTalkLaterOutcome' }, { text: 'Tell school to handle it', action: 'henrykSchoolHandleOutcome' }] },
+            { type: 'refusingLunch', message: "School (on phone): 'Mr. Trent, Henryk is refusing to eat his lunch. He says he only wants pizza.'", choices: [{ text: 'Go to school immediately', action: 'henrykGoToSchoolOutcome' }, { text: 'Talk to him later at home', action: 'henrykTalkLaterOutcome' }, { text: 'Tell school to handle it', action: 'henrykSchoolHandleOutcome' }] },
+            { type: 'runningInHalls', message: "School (on phone): 'Mr. Trent, Henryk was running in the halls and almost caused an accident.'", choices: [{ text: 'Go to school immediately', action: 'henrykGoToSchoolOutcome' }, { text: 'Talk to him later at home', action: 'henrykTalkLaterOutcome' }, { text: 'Tell school to handle it', action: 'henrykSchoolHandleOutcome' }] }
+        ];
+
+        const originalSamScenarios = [
+            { message: "Sam: 'Morning Jo! This printer is being a nightmare. Think you could work your magic?'", choices: [{ text: 'Offer to fix it with a wink', action: 'samPrinterFlirtOutcome' }, { text: 'Say you\'re snowed under', action: 'samBusyOutcome' }] },
+            { message: "Sam: 'Ugh, another Monday. Wish I was still on holiday, eh Jo?'", choices: [{ text: 'Sympathize and suggest future plans', action: 'samMondaySympathyOutcome' }, { text: 'Keep it strictly professional', action: 'samProfessionalOutcome' }] },
+            { message: "Sam: 'Hey Jo, do you know what the temperature is in here? I\'m freezing!'", choices: [{ text: 'Offer your hoodie', action: 'samOfferHoodieOutcome' }, { text: 'Suggest she puts on a jumper', action: 'samJumperOutcome' }] },
+            { message: "Sam: 'Just admiring your focus, Jo. What's got you so engrossed?'", choices: [{ text: 'Lean in and explain with a smile', action: 'samExplainSmileOutcome' }, { text: 'Give a quick, serious answer', action: 'samSeriousOutcome' }] },
+            { message: "Sam: 'I'm thinking of trying that new coffee shop down the road. Care to join for a break?'", choices: [{ text: 'Accept the invite', action: 'samCoffeeInviteOutcome' }, { text: 'Decline, too busy', action: 'samBusyOutcome' }] },
+            { message: "Sam: 'My car's making a weird noise. You know anything about cars, Jo?'", choices: [{ text: 'Offer to take a look', action: 'samCarHelpOutcome' }, { text: 'Suggest a mechanic', action: 'samProfessionalOutcome' }] }
+        ];
+
+        const originalLibbyScenarios = [
+            { message: "Libby: 'Jo, good morning! My computer's being sluggish. Got any IT wizardry up your sleeve?'", choices: [{ text: 'Act like a tech hero', action: 'libbyTechHeroOutcome' }, { text: 'Tell her to call IT', action: 'libbyCallITOutcome' }] },
+            { message: "Libby: 'I'm starving! Any good places for lunch near Cater Road you'd recommend, Jo?'", choices: [{ text: 'Suggest a lunch date', action: 'libbyLunchDateOutcome' }, { text: 'Just name a sandwich shop', action: 'libbySandwichOutcome' }] },
+            { message: "Libby: 'This new job has me a bit stressed. Any tips for surviving the Trent's Drains pressure, Jo?'", choices: [{ text: 'Offer a supportive, knowing look', action: 'libbySupportiveLookOutcome' }, { text: 'Tell her to get used to it', action: 'libbyGetUsedToItOutcome' }] },
+            { message: "Libby: 'I saw Lewis's Ferrari in the car park. What a car! Do you think he takes it off-road?'", choices: [{ text: 'Joke about drain unblocking it', action: 'libbyFerrariJokeOutcome' }, { text: 'Give a serious car enthusiast answer', action: 'libbyFerrariSeriousOutcome' }] },
+            { message: "Libby: 'I'm planning a weekend trip to the coast. Any nice spots you know near Bristol?'", choices: [{ text: 'Recommend a romantic spot', action: 'libbyCoastSuggestOutcome' }, { text: 'Say you don\'t know many places', action: 'libbySandwichOutcome' }] },
+            { message: "Libby: 'This new software update is so confusing! Could you possibly walk me through it later?'", choices: [{ text: 'Offer to help after work', action: 'libbySoftwareHelpOutcome' }, { text: 'Say you\'re busy', action: 'libbyCallITOutcome' }] }
+        ];
+
+        // Current scenario pools for each type, initialized at game start
+        let currentBossScenarios;
+        let currentHrScenarios;
+        let currentAsiaScenarios;
+        let currentHenrykScenarios;
+        let currentSamScenarios;
+        let currentLibbyScenarios;
+
+        // Resets the scenario pools for a new game
+        function resetScenarioPools() {
+            currentBossScenarios = {
+                Lewis: [...originalBossScenarios.Lewis],
+                Mark: [...originalBossScenarios.Mark],
+                Ross: [...originalBossScenarios.Ross],
+            };
+            currentHrScenarios = [...originalHrScenarios];
+            currentAsiaScenarios = [...originalAsiaScenarios];
+            currentHenrykScenarios = [...originalHenrykScenarios];
+            currentSamScenarios = [...originalSamScenarios];
+            currentLibbyScenarios = [...originalLibbyScenarios];
+        }
+
+        // Function to get a unique scenario from a given pool. If pool is exhausted, it can reset.
+        function getUniqueScenario(poolName, caller = null) {
+            let pool;
+            if (caller && ['Lewis', 'Mark', 'Ross'].includes(caller)) { // For specific boss scenarios
+                pool = currentBossScenarios[caller];
+            } else { // For general pools (HR, Asia, Henryk, Sam, Libby)
+                switch (poolName) {
+                    case 'hr': pool = currentHrScenarios; break;
+                    case 'asia': pool = currentAsiaScenarios; break;
+                    case 'henryk': pool = currentHenrykScenarios; break;
+                    case 'sam': pool = currentSamScenarios; break;
+                    case 'libby': pool = currentLibbyScenarios; break;
+                    default: return null;
+                }
+            }
+
+            if (pool.length === 0) {
+                // If all scenarios are used, re-fill the pool from original to allow repetition
+                console.warn(`All scenarios for ${poolName} exhausted. Re-filling pool.`);
+                if (caller && ['Lewis', 'Mark', 'Ross'].includes(caller)) {
+                    currentBossScenarios[caller] = [...originalBossScenarios[caller]];
+                } else {
+                    switch (poolName) {
+                        case 'hr': currentHrScenarios = [...originalHrScenarios]; break;
+                        case 'asia': currentAsiaScenarios = [...originalAsiaScenarios]; break;
+                        case 'henryk': currentHenrykScenarios = [...originalHenrykScenarios]; break;
+                        case 'sam': currentSamScenarios = [...originalSamScenarios]; break;
+                        case 'libby': currentLibbyScenarios = [...originalLibbyScenarios]; break;
+                    }
+                }
+                // Try to get a scenario from the newly refilled pool
+                return getUniqueScenario(poolName, caller); // Recursive call
+            }
+
+            const randomIndex = Math.floor(Math.random() * pool.length);
+            const scenario = pool[randomIndex];
+            pool.splice(randomIndex, 1); // Remove it from the current pool
+            return scenario;
+        }
+
 
         // DOM Elements
         const timeDisplay = document.getElementById('time-display');
@@ -425,6 +646,7 @@
         const pressureDisplay = document.getElementById('pressure-display');
         const samAttentionDisplay = document.getElementById('sam-attention-display');
         const libbyAttentionDisplay = document.getElementById('libby-attention-display');
+        const asiaHappinessDisplay = document.getElementById('asia-happiness-display');
         const officeDisplay = document.getElementById('office-display');
         const currentSceneText = document.getElementById('current-scene-text');
         const bigChangeDisplay = document.getElementById('big-change-display');
@@ -446,89 +668,170 @@
 
         const gameModal = document.getElementById('game-modal');
         const modalMessage = document.getElementById('modal-message');
-        const modalChoices = document.getElementById('modal-choices');
+        const modalButtons = document.getElementById('modal-buttons');
+
+        const instructionsModal = document.getElementById('instructions-modal');
+        const startGameButton = document.getElementById('start-game-button');
+        const loadingMessageDiv = document.getElementById('loading-message'); // New loading message element
 
         // Audio elements
         const mainMusic = document.getElementById('main-music');
         const urgentMusic = document.getElementById('urgent-music');
         const sexyMusic = document.getElementById('sexy-music');
         const buttonClickSound = document.getElementById('button-click-sound');
+        const phoneRingSound = document.getElementById('phone-ring-sound');
+        const personalCallMusic = document.getElementById('personal-call-music');
 
         // Set initial volumes
         mainMusic.volume = 0.4;
         urgentMusic.volume = 0.6;
         sexyMusic.volume = 0.5;
         buttonClickSound.volume = 0.7;
+        phoneRingSound.volume = 0.9;
+        personalCallMusic.volume = 0.8;
 
         // --- Audio Control Functions ---
         function playMainMusic() {
+            phoneRingSound.pause();
+            phoneRingSound.currentTime = 0;
             urgentMusic.pause();
             urgentMusic.currentTime = 0;
             sexyMusic.pause();
             sexyMusic.currentTime = 0;
-            mainMusic.play().catch(e => console.log("Main music autoplay blocked:", e)); // Catch and log autoplay errors
+            personalCallMusic.pause();
+            personalCallMusic.currentTime = 0;
+            mainMusic.play().catch(e => console.error("Main music autoplay blocked:", e));
         }
 
         function playUrgentMusic() {
+            phoneRingSound.pause();
+            phoneRingSound.currentTime = 0;
             mainMusic.pause();
             sexyMusic.pause();
             sexyMusic.currentTime = 0;
-            urgentMusic.play().catch(e => console.log("Urgent music autoplay blocked:", e));
+            personalCallMusic.pause();
+            personalCallMusic.currentTime = 0;
+            urgentMusic.play().catch(e => console.error("Urgent music autoplay blocked:", e));
         }
 
         function playSexyMusic() {
+            phoneRingSound.pause();
+            phoneRingSound.currentTime = 0;
             mainMusic.pause();
             urgentMusic.pause();
             urgentMusic.currentTime = 0;
-            sexyMusic.play().catch(e => console.log("Sexy music autoplay blocked:", e));
+            personalCallMusic.pause();
+            personalCallMusic.currentTime = 0;
+            sexyMusic.play().catch(e => console.error("Sexy music autoplay blocked:", e));
+        }
+
+        function playPhoneRingSound() {
+            mainMusic.pause(); // Pause background music while ringing
+            urgentMusic.pause();
+            urgentMusic.currentTime = 0;
+            sexyMusic.pause();
+            sexyMusic.currentTime = 0;
+            personalCallMusic.pause();
+            personalCallMusic.currentTime = 0;
+            phoneRingSound.play().catch(e => console.error("Phone ringtone autoplay blocked:", e));
+        }
+
+        function playPersonalCallMusic() {
+            phoneRingSound.pause();
+            phoneRingSound.currentTime = 0;
+            mainMusic.pause();
+            urgentMusic.pause();
+            urgentMusic.currentTime = 0;
+            sexyMusic.pause();
+            sexyMusic.currentTime = 0;
+            personalCallMusic.play().catch(e => console.error("Personal call music autoplay blocked:", e));
         }
 
         function playButtonClickSound() {
-            buttonClickSound.currentTime = 0; // Rewind to start for quick successive clicks
-            buttonClickSound.play().catch(e => console.log("Button click sound autoplay blocked:", e));
+            buttonClickSound.currentTime = 0;
+            buttonClickSound.play().catch(e => console.error("Button click sound autoplay blocked:", e));
         }
 
-        // Attach click sound to all game buttons
-        // This needs to be done AFTER the buttons are rendered or on a general parent element
+        // Attach click sound to all game buttons and modal buttons
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.game-button').forEach(button => {
                 button.addEventListener('click', playButtonClickSound);
             });
-             // Also attach to modal buttons for consistency
-            document.querySelectorAll('.modal-button').forEach(button => {
-                button.addEventListener('click', playButtonClickSound);
-            });
+            // Modal buttons are added dynamically, so we need to ensure they get event listeners too.
+            // This is handled in showModal by setting onclick directly on dynamically created buttons.
         });
-
 
         // --- Game Initialization ---
         function initGame() {
-            time = 480; // Reset time to 8 minutes
-            score = 0;
-            bossPressure = 0;
-            samAttention = 0;
-            libbyAttention = 0;
-            phoneRinging = true;
-            currentScene = 'desk';
-            selectedJob = null;
-            selectedEngineer = null;
-            jobs = [];
+            // Display loading message immediately
+            loadingMessageDiv.classList.remove('hidden');
+            startGameButton.textContent = 'Loading...';
+            startGameButton.disabled = true;
 
-            ENGINEERS.forEach(eng => eng.status = 'Available'); // Reset engineer status
+            // Short delay to allow loading message to display and audio to prepare
+            setTimeout(() => {
+                // Hide instructions modal
+                instructionsModal.classList.add('hidden');
+                loadingMessageDiv.classList.add('hidden'); // Hide loading message
 
-            clearInterval(gameInterval);
-            clearInterval(jobGenerationInterval);
-            clearTimeout(bossCallTimeout);
+                // Reset game state
+                time = 480;
+                score = 0;
+                bossPressure = 0;
+                samAttention = 0;
+                libbyAttention = 0;
+                asiaHappiness = 50;
+                phoneRinging = false; // Start with phone NOT ringing
+                incomingCallType = null;
+                currentScene = 'desk';
+                selectedJob = null;
+                selectedEngineer = null;
+                jobs = [];
 
-            updateUI();
-            updateOfficeScene();
-            startPhoneRinging();
-            startGameLoop();
-            startJobGeneration();
-            scheduleBossCalls();
+                // Reset counters for guaranteed calls
+                asiaCallsMade = 0;
+                henrykCallsMade = 0;
 
-            playMainMusic(); // Start main music on game initialization
+                ENGINEERS.forEach(eng => eng.status = 'Available');
+                resetScenarioPools(); // Reset all scenario pools for new game
+
+                // Clear any lingering intervals/timeouts
+                clearInterval(gameInterval);
+                clearInterval(jobGenerationInterval);
+                clearTimeout(callSchedulingTimeout);
+
+                // Start game loops and schedule first call
+                updateUI();
+                updateOfficeScene();
+                startGameLoop();
+                startJobGeneration();
+                scheduleNextCall(); // Schedule the very first phone call
+
+                playMainMusic(); // Start main music
+                
+                // Reset start button (in case game ends and user restarts)
+                startGameButton.textContent = 'Start Game';
+                startGameButton.disabled = false;
+
+            }, 1500); // 1500ms delay
         }
+
+        // Function to show instructions on initial load
+        function showInstructions() {
+            instructionsModal.classList.remove('hidden');
+            loadingMessageDiv.classList.remove('hidden'); // Show loading message as soon as instructions are shown
+            startGameButton.disabled = true; // Disable until loaded, or timeout
+            startGameButton.textContent = 'Loading...';
+
+            // Allow initial audio loading
+            setTimeout(() => {
+                loadingMessageDiv.textContent = 'Ready! Click "Start Game" to begin!'; // Update message
+                startGameButton.textContent = 'Start Game';
+                startGameButton.disabled = false;
+                startGameButton.onclick = initGame; // Make it clickable
+            }, 1000); // Short delay to allow initial load before button becomes active
+        }
+
 
         // --- UI Update Functions ---
         function updateUI() {
@@ -537,30 +840,34 @@
             pressureDisplay.textContent = `${bossPressure}%`;
             samAttentionDisplay.textContent = `${samAttention}%`;
             libbyAttentionDisplay.textContent = `${libbyAttention}%`;
+            asiaHappinessDisplay.textContent = `${asiaHappiness}%`;
 
             renderEngineers();
             renderJobs();
 
-            // Button visibility based on current scene and selections
-            assignButton.classList.toggle('hidden', currentScene !== 'desk' || !selectedJob || !selectedEngineer);
-            clearSelectionButton.classList.toggle('hidden', currentScene !== 'desk' || (!selectedJob && !selectedEngineer));
+            // Button disabled states are crucial here
+            answerPhoneButton.disabled = !phoneRinging || currentScene !== 'desk' || !gameModal.classList.contains('hidden'); // Only enabled at desk, if ringing, and no other modal
+            goToDeskButton.disabled = currentScene === 'desk' || !gameModal.classList.contains('hidden'); // Only enabled if not at desk AND no modal open
+            talkToSamButton.disabled = currentScene !== 'desk' || phoneRinging || !gameModal.classList.contains('hidden'); // Only enabled at desk, not if phone is ringing, and no other modal
+            talkToLibbyButton.disabled = currentScene !== 'desk' || phoneRinging || !gameModal.classList.contains('hidden'); // Only enabled at desk, not if phone is ringing, and no other modal
 
-            // Phone ringing animation
-            phoneSvg.classList.toggle('phone-ringing', phoneRinging && currentScene !== 'phone');
+            // Assign and Clear buttons are always visible, but disabled based on context
+            assignButton.disabled = currentScene !== 'desk' || !selectedJob || !selectedEngineer || !gameModal.classList.contains('hidden');
+            clearSelectionButton.disabled = currentScene !== 'desk' || (!selectedJob && !selectedEngineer) || !gameModal.classList.contains('hidden');
+
+            // Phone animation: only shows if at desk AND phoneRinging is true AND no modal is open
+            phoneSvg.classList.toggle('phone-ringing', phoneRinging && currentScene === 'desk' && gameModal.classList.contains('hidden'));
         }
 
         function updateOfficeScene() {
-            // Hide all characters first
             joSvg.classList.add('hidden');
             samSvg.classList.add('hidden');
             libbySvg.classList.add('hidden');
             phoneSvg.classList.add('hidden');
-            bossSvg.classList.add('hidden'); // Ensure boss is hidden by default
+            bossSvg.classList.add('hidden');
 
-            // Hide/show Big Change system based on scene
             bigChangeDisplay.style.display = 'none';
 
-            // Reset selection when changing scenes, unless going to desk to use Big Change
             if (currentScene !== 'desk') {
                 selectedJob = null;
                 selectedEngineer = null;
@@ -568,45 +875,29 @@
 
             switch (currentScene) {
                 case 'desk':
-                    currentSceneText.textContent = 'You are at your desk, ready to tackle jobs. The phone is ringing!';
+                    currentSceneText.textContent = 'You are at your desk, ready to tackle jobs.';
+                    if (phoneRinging) currentSceneText.textContent += ' The phone is ringing!';
                     joSvg.classList.remove('hidden');
-                    bigChangeDisplay.style.display = 'flex'; // Show Big Change at desk (flex for Keegan img)
-                    phoneSvg.classList.remove('hidden'); // Phone is always visible from desk
-                    // Action buttons for desk
-                    answerPhoneButton.classList.toggle('hidden', !phoneRinging);
-                    goToDeskButton.classList.add('hidden');
-                    talkToSamButton.classList.remove('hidden');
-                    talkToLibbyButton.classList.remove('hidden');
+                    bigChangeDisplay.style.display = 'flex';
+                    phoneSvg.classList.remove('hidden');
                     break;
                 case 'phone':
                     currentSceneText.textContent = 'You are at the phone, answering a call.';
                     joSvg.classList.remove('hidden');
                     phoneSvg.classList.remove('hidden');
-                    answerPhoneButton.classList.add('hidden');
-                    goToDeskButton.classList.remove('hidden'); // Can go back to desk
-                    talkToSamButton.classList.add('hidden');
-                    talkToLibbyButton.classList.add('hidden');
                     break;
                 case 'sam':
-                    currentSceneText.textContent = 'You are talking to Sam. She seems busy.';
+                    currentSceneText.textContent = 'You are talking to Sam.';
                     joSvg.classList.remove('hidden');
                     samSvg.classList.remove('hidden');
-                    answerPhoneButton.classList.add('hidden');
-                    goToDeskButton.classList.remove('hidden');
-                    talkToSamButton.classList.add('hidden');
-                    talkToLibbyButton.classList.add('hidden');
                     break;
                 case 'libby':
-                    currentSceneText.textContent = 'You are talking to Libby. She gives you a quick smile.';
+                    currentSceneText.textContent = 'You are talking to Libby.';
                     joSvg.classList.remove('hidden');
                     libbySvg.classList.remove('hidden');
-                    answerPhoneButton.classList.add('hidden');
-                    goToDeskButton.classList.remove('hidden');
-                    talkToSamButton.classList.add('hidden');
-                    talkToLibbyButton.classList.add('hidden');
                     break;
             }
-            updateUI(); // Re-render engineers/jobs as well
+            updateUI(); // Re-render buttons and stats based on new scene
         }
 
         function renderEngineers() {
@@ -615,8 +906,10 @@
                 const engDiv = document.createElement('div');
                 engDiv.className = `engineer-item ${selectedEngineer && selectedEngineer.id === eng.id ? 'selected' : ''}`;
                 engDiv.textContent = `${eng.name} (${eng.status})`;
-                if (currentScene === 'desk' && eng.status === 'Available') { // Only clickable if at desk and available
+                if (currentScene === 'desk' && eng.status === 'Available' && gameModal.classList.contains('hidden')) { // Can only select if at desk AND no modal open
                     engDiv.onclick = () => selectEngineer(eng);
+                    engDiv.style.cursor = 'pointer';
+                    engDiv.style.opacity = '1';
                 } else {
                     engDiv.style.opacity = '0.6';
                     engDiv.style.cursor = 'not-allowed';
@@ -642,8 +935,10 @@
                         Time Left: ${formatTime(job.timeLeft)}
                     </div>
                 `;
-                if (currentScene === 'desk') { // Only clickable if at desk
+                if (currentScene === 'desk' && gameModal.classList.contains('hidden')) { // Can only select if at desk AND no modal open
                     jobDiv.onclick = () => selectJob(job);
+                    jobDiv.style.cursor = 'pointer';
+                    jobDiv.style.opacity = '1';
                 } else {
                     jobDiv.style.opacity = '0.6';
                     jobDiv.style.cursor = 'not-allowed';
@@ -666,12 +961,11 @@
                 if (time <= 0) {
                     clearInterval(gameInterval);
                     clearInterval(jobGenerationInterval);
-                    clearTimeout(bossCallTimeout);
+                    clearTimeout(callSchedulingTimeout);
                     showModal('Time is up! Game Over!', [{ text: 'Restart', action: 'restart' }]);
                     return;
                 }
 
-                // Decrease job time left and handle overdue jobs
                 jobs.forEach(job => {
                     job.timeLeft--;
                     if (job.timeLeft <= 0) {
@@ -679,26 +973,26 @@
                     }
                 });
 
-                // Increase boss pressure over time or if jobs are overdue - SLOWER RATE
-                bossPressure = Math.min(100, bossPressure + Math.floor(jobs.length / 4)); // Pressure increases with more jobs, but slower
-
+                bossPressure = Math.min(100, bossPressure + Math.floor(jobs.length / 3)); // Slightly faster pressure increase
                 if (bossPressure >= 100) {
                     clearInterval(gameInterval);
                     clearInterval(jobGenerationInterval);
-                    clearTimeout(bossCallTimeout);
-                    showModal('Boss Pressure is too high! You got fired! Game Over!', [{ text: 'Restart', action: 'restart' }]);
+                    clearTimeout(callSchedulingTimeout);
+                    showModal('Boss Pressure is too high! You got fired! Game Over!', [{ text: 'OK', action: 'restart' }]);
                     return;
                 }
-
                 updateUI();
             }, 1000);
         }
 
         function startJobGeneration() {
             jobGenerationInterval = setInterval(() => {
-                generateNewJob();
+                // Only generate new job if no modal is active
+                if (gameModal.classList.contains('hidden')) {
+                    generateNewJob();
+                }
                 updateUI();
-            }, 30000); // New job every 30 seconds - INCREASED
+            }, 20000); // New job every 20 seconds (faster)
         }
 
         function generateNewJob() {
@@ -706,7 +1000,7 @@
                 id: 'JOB' + (jobs.length + 1) + Math.floor(Math.random() * 1000),
                 location: ['Bristol City Centre', 'Portishead', 'Clevedon', 'Clifton', 'Filton'][Math.floor(Math.random() * 5)],
                 urgency: ['High', 'Medium', 'Low'][Math.floor(Math.random() * 3)],
-                timeLeft: 60 + Math.floor(Math.random() * 60) // 60-120 seconds to complete - INCREASED
+                timeLeft: 50 + Math.floor(Math.random() * 50) // 50-100 seconds to complete (faster)
             };
             jobs.push(newJob);
             showModal(`New Job Alert! ID: ${newJob.id} - Location: ${newJob.location}`, [{ text: 'OK', action: 'ok' }]);
@@ -714,21 +1008,44 @@
 
         function handleOverdueJob(jobId) {
             jobs = jobs.filter(job => job.id !== jobId);
-            bossPressure = Math.min(100, bossPressure + 10); // Significant pressure increase, slightly reduced
-            score = Math.max(0, score - 15); // Score penalty, slightly reduced
+            bossPressure = Math.min(100, bossPressure + 12); // Slightly more pressure for overdue
+            score = Math.max(0, score - 18); // Slightly more score penalty
             showModal(`Job ${jobId} was not completed in time! Boss Pressure increased.`, [{ text: 'OK', action: 'ok' }]);
             updateUI();
         }
 
-        function scheduleBossCalls() {
-            bossCallTimeout = setTimeout(() => {
-                phoneRinging = true;
-                // Don't show modal if another modal is already open
+        // This schedules the *next* time the phone will ring, and what type of call it will be
+        function scheduleNextCall() {
+            clearTimeout(callSchedulingTimeout); // Clear any existing timeout
+
+            callSchedulingTimeout = setTimeout(() => {
+                // Only make phone ring if no modal is currently active
                 if (gameModal.classList.contains('hidden')) {
-                    showModal('The phone is ringing furiously! It sounds like a boss!', [{ text: 'Answer Phone', action: 'answerBossCall' }]);
+                    phoneRinging = true; // Set state to ringing
+                    playPhoneRingSound(); // Play the distinct ringtone
+                    
+                    // Determine call type based on guarantee counters first, then randomness
+                    if (asiaCallsMade < ASIA_MIN_CALLS) {
+                        incomingCallType = 'personal_call_asia_guarantee';
+                    } else if (henrykCallsMade < HENRYK_MIN_CALLS) {
+                        incomingCallType = 'personal_call_henryk_guarantee';
+                    } else {
+                        // Normal random selection if minimums are met
+                        const callTypeRoll = Math.random();
+                        if (callTypeRoll < 0.15) { // 15% chance for HR task
+                            incomingCallType = 'hr_task';
+                        } else if (callTypeRoll < 0.45) { // 30% chance for personal call
+                            incomingCallType = 'personal_call';
+                        } else { // 55% chance for regular boss call
+                            incomingCallType = 'boss_call';
+                        }
+                    }
+                    updateUI(); // Update buttons and phone animation
+                } else {
+                    // If a modal is open, reschedule the call for a bit later
+                    scheduleNextCall();
                 }
-                updateUI();
-            }, 45000 + Math.random() * 30000); // Boss calls every 45-75 seconds - INCREASED
+            }, 8000 + Math.random() * 12000); // Calls every 8-20 seconds (faster)
         }
 
         function selectJob(job) {
@@ -743,288 +1060,332 @@
 
         // --- Action Handlers ---
 
+        // This function is triggered when the "Answer Phone" button is clicked
         answerPhoneButton.onclick = () => {
+            if (answerPhoneButton.disabled) { return; } // Prevent action if disabled
             playButtonClickSound();
-            goToScene('phone');
-            phoneRinging = false;
+            phoneRingSound.pause(); // Stop the ringtone immediately
+            phoneRingSound.currentTime = 0; // Reset ringtone
+            goToScene('phone'); // Transition to phone scene
+            phoneRinging = false; // Stop ringing animation
+            
+            // Now, handle the specific type of incoming call based on what was scheduled
+            switch (incomingCallType) {
+                case 'boss_call':
+                    playUrgentMusic(); // Play urgent music only after answering
+                    handleBossCall();
+                    break;
+                case 'hr_task':
+                    playUrgentMusic(); // Play urgent music only after answering
+                    triggerHRTask();
+                    break;
+                case 'personal_call':
+                case 'personal_call_asia_guarantee': // Explicitly handle guarantee types
+                case 'personal_call_henryk_guarantee':
+                    playPersonalCallMusic(); // Play personal call music only after answering
+                    triggerPersonalCall(incomingCallType); // Pass call type to ensure correct scenario
+                    break;
+                default:
+                    console.error("No incoming call type set when answering phone. This should not happen.");
+                    showModal('The line is dead... weird.', [{ text: 'OK', action: 'callEnd' }]);
+            }
+            incomingCallType = null; // Clear incoming call type after handling
             updateUI();
-            handlePhoneCall();
         };
 
         goToDeskButton.onclick = () => {
+            if (goToDeskButton.disabled) { return; }
             playButtonClickSound();
             goToScene('desk');
             updateUI();
         };
 
         talkToSamButton.onclick = () => {
+            if (talkToSamButton.disabled) { return; }
             playButtonClickSound();
-            goToScene('sam');
-            updateUI();
-            handleSamInteraction();
+            goToScene('sam'); // Transition to Sam scene
+            updateUI(); // Update UI to reflect scene change
+            handleSamInteraction(); // Show Sam's dialogue modal
         };
 
         talkToLibbyButton.onclick = () => {
+            if (talkToLibbyButton.disabled) { return; }
             playButtonClickSound();
-            goToScene('libby');
-            updateUI();
-            handleLibbyInteraction();
+            goToScene('libby'); // Transition to Libby scene
+            updateUI(); // Update UI to reflect scene change
+            handleLibbyInteraction(); // Show Libby's dialogue modal
         };
 
         assignButton.onclick = () => {
+            if (assignButton.disabled) { return; }
             playButtonClickSound();
             if (selectedJob && selectedEngineer) {
-                assignJob(selectedJob, selectedEngineer);
+                // If special engineer, show their prompt. Otherwise, directly assign.
+                if (selectedEngineer.name === 'Jordan') {
+                    showModal(`Jordan grumbles: "Another rubbish job. Can't you find anything decent?"`, [{ text: 'OK', action: 'jordanAssignedOutcome' }]);
+                } else if (selectedEngineer.name === 'Calum') {
+                    showModal(`Calum needs assigning to Job ${selectedJob.id}. How do you tell him?`, [
+                        { text: 'Firmly', action: 'calumAssignedFirmlyOutcome' },
+                        { text: 'Gently', action: 'calumAssignedGentlyOutcome' }
+                    ]);
+                } else {
+                    assignJobAction(selectedJob, selectedEngineer); // Directly call assignment if no special engineer
+                }
             } else {
                 showModal('Please select both a job and an engineer.', [{ text: 'OK', action: 'ok' }]);
             }
         };
 
         clearSelectionButton.onclick = () => {
+            if (clearSelectionButton.disabled) { return; }
             playButtonClickSound();
             selectedJob = null;
             selectedEngineer = null;
             updateUI();
         };
 
-        function assignJob(job, engineer) {
-            // Check if engineer is actually available
+        function assignJobAction(job, engineer) {
             const actualEngineer = ENGINEERS.find(e => e.id === engineer.id);
             if (actualEngineer && actualEngineer.status !== 'Available') {
                 showModal(`${engineer.name} is currently busy! Choose an available engineer.`, [{ text: 'OK', action: 'ok' }]);
-                selectedEngineer = null; // Clear selection
+                selectedEngineer = null;
                 updateUI();
                 return;
             }
 
-            // Assign engineer to job
             ENGINEERS.find(e => e.id === engineer.id).status = `On Job ${job.id}`;
-            jobs = jobs.filter(j => j.id !== job.id); // Remove job from active list
+            jobs = jobs.filter(j => j.id !== job.id);
 
-            score += 50; // Increase score for successful assignment
-            bossPressure = Math.max(0, bossPressure - 5); // Reduce boss pressure
-            time = Math.max(0, time - 8); // Time cost for assignment - SLIGHTLY REDUCED
+            score += 50;
+            bossPressure = Math.max(0, bossPressure - 5);
+            time = Math.max(0, time - 6); // Slightly reduced time cost for assignment
 
             selectedJob = null;
             selectedEngineer = null;
 
-            showModal(`Job ${job.id} assigned to ${engineer.name}! Good work, Jo!`, [{ text: 'OK', action: 'ok' }]);
+            showModal(`Job ${job.id} assigned to ${engineer.name}! Good work, Jo!`, [{ text: 'OK', action: 'callEnd' }]); // Use callEnd to ensure proper reset
             updateUI();
 
-            // Simulate engineer returning after a delay
+            // Schedule engineer's return
             setTimeout(() => {
                 ENGINEERS.find(e => e.id === engineer.id).status = 'Available';
-                showModal(`${engineer.name} has returned and is now available.`, [{ text: 'OK', action: 'ok' }]);
+                // Only show modal if no other modal is currently open to avoid interruption
+                if (gameModal.classList.contains('hidden')) {
+                    showModal(`${engineer.name} has returned and is now available.`, [{ text: 'OK', action: 'ok' }]);
+                } else {
+                    // If a modal is open, user will see the update later when they return to desk
+                    console.log(`${engineer.name} returned, but modal is open. Update will be visible later.`);
+                }
                 updateUI();
-            }, 12000 + Math.random() * 8000); // Engineer returns after 12-20 seconds - SLIGHTLY INCREASED
+            }, 8000 + Math.random() * 7000); // Engineer returns faster (8-15s)
         }
 
-        function handlePhoneCall() {
-            bossSvg.classList.remove('hidden'); // Show boss during call
-            playUrgentMusic(); // Play urgent music
-
-            const caller = ['Lewis', 'Mark', 'Ross'][Math.floor(Math.random() * 3)];
-            let message = '';
-            let choices = [];
-
-            switch (caller) {
-                case 'Lewis':
-                    message = "Lewis (big boss) is on the line: 'Jo! Why aren't these jobs moving? My Ferrari isn't paying for itself!'";
-                    choices = [
-                        { text: 'Assure him you are on it', action: 'phoneReplyLewisGood' },
-                        { text: 'Complain about system issues', action: 'phoneReplyLewisBad' }
-                    ];
-                    break;
-                case 'Mark':
-                    message = "Mark (big boss) calls: 'Jo, we have a reputation to uphold! What's the status on the high urgency jobs?'";
-                    choices = [
-                        { text: 'Give a confident update', action: 'phoneReplyMarkGood' },
-                        { text: 'Stammer and say you\'re busy', action: 'phoneReplyMarkBad' }
-                    ];
-                    break;
-                case 'Ross':
-                    message = "Ross (your direct boss) grumbles: 'Jo, new job just came in. Get an engineer on it NOW!'";
-                    choices = [
-                        { text: 'Acknowledge and prioritize', action: 'phoneReplyRossGood' },
-                        { text: 'Tell him you\'re already swamped', action: 'phoneReplyRossBad' }
-                    ];
-                    break;
-            }
-            showModal(message, choices);
-            // Reset boss call timeout after handling the call
-            clearTimeout(bossCallTimeout);
-            scheduleBossCalls();
-        }
-
-        function afterPhoneCall() {
-            bossSvg.classList.add('hidden'); // Hide boss after call
-            goToScene('desk'); // Always return to desk after phone call
-            updateUI();
-            playMainMusic(); // Resume main music
-        }
-
-        function handlePhoneReplyLewisGood() {
-            score += 15;
-            bossPressure = Math.max(0, bossPressure - 10);
-            time = Math.max(0, time - 4); // Time cost for call - SLIGHTLY REDUCED
-            showModal('Lewis seems satisfied. For now.', [{ text: 'OK', action: 'phoneCallEnd' }]);
-        }
-
-        function handlePhoneReplyLewisBad() {
-            score = Math.max(0, score - 10);
-            bossPressure = Math.min(100, bossPressure + 10);
-            time = Math.max(0, time - 4); // Time cost for call - SLIGHTLY REDUCED
-            showModal('Lewis is not happy. Your pressure increased!', [{ text: 'OK', action: 'phoneCallEnd' }]);
-        }
-
-        function handlePhoneReplyMarkGood() {
-            score += 10;
-            bossPressure = Math.max(0, bossPressure - 7);
-            time = Math.max(0, time - 3); // Time cost for call - SLIGHTLY REDUCED
-            showModal('Mark sounds approving. Good job.', [{ text: 'OK', action: 'phoneCallEnd' }]);
-        }
-
-        function handlePhoneReplyMarkBad() {
+        // Engineer specific assignment outcomes (these are intermediate steps)
+        function jordanAssignedOutcome() { // This is called from the modal choice for Jordan's grumble
+            bossPressure = Math.min(100, bossPressure + 5);
             score = Math.max(0, score - 5);
-            bossPressure = Math.min(100, bossPressure + 7);
-            time = Math.max(0, time - 3); // Time cost for call - SLIGHTLY REDUCED
-            showModal('Mark sighs. You feel the pressure rising.', [{ text: 'OK', action: 'phoneCallEnd' }]);
+            assignJobAction(selectedJob, selectedEngineer); // Proceed with actual assignment
         }
 
-        function handlePhoneReplyRossGood() {
-            score += 5;
+        function calumAssignedFirmlyOutcome() { // This is called from the modal choice for Calum's firm option
+            bossPressure = Math.min(100, bossPressure + 10);
+            score = Math.max(0, score - 5);
+            assignJobAction(selectedJob, selectedEngineer); // Proceed with actual assignment
+        }
+
+        function calumAssignedGentlyOutcome() { // This is called from the modal choice for Calum's gentle option
             bossPressure = Math.max(0, bossPressure - 3);
-            time = Math.max(0, time - 2); // Time cost for call - SLIGHTLY REDUCED
-            showModal('Ross grunts. That means he\'s content.', [{ text: 'OK', action: 'phoneCallEnd' }]);
+            score += 5;
+            assignJobAction(selectedJob, selectedEngineer); // Proceed with actual assignment
         }
 
-        function handlePhoneReplyRossBad() {
-            score = Math.max(0, score - 3);
-            bossPressure = Math.min(100, bossPressure + 3);
-            time = Math.max(0, time - 2); // Time cost for call - SLIGHTLY REDUCED
-            showModal('Ross snorts. He\'ll be watching you.', [{ text: 'OK', action: 'phoneCallEnd' }]);
+        // Handles the actual boss call content
+        function handleBossCall() {
+            bossSvg.classList.remove('hidden');
+            const caller = ['Lewis', 'Mark', 'Ross'][Math.floor(Math.random() * 3)];
+            const scenario = getUniqueScenario('Boss', caller); // Get unique scenario for this boss
+            if (!scenario) { // Fallback if no unique scenario (shouldn't happen with re-filling)
+                showModal('The line is busy... (No new boss scenarios)', [{ text: 'OK', action: 'callEnd' }]);
+                return;
+            }
+            showModal(scenario.message, scenario.choices);
         }
 
-        function handleSamInteraction() {
-            playSexyMusic(); // Play sexy music
-            const dialogue = [
-                {
-                    message: "Sam: 'Morning Jo! Got a moment to help me with this spreadsheet? It's really baffling me.'",
-                    choices: [
-                        { text: 'Help her (Spend time)', action: 'samHelp' },
-                        { text: 'Say you\'re too busy', action: 'samBusy' }
-                    ]
-                },
-                {
-                    message: "Sam: 'Ugh, the coffee machine is broken again. Any chance you could look at it, Jo?'",
-                    choices: [
-                        { text: 'Offer to fix it', action: 'samCoffee' },
-                        { text: 'Suggest she call maintenance', action: 'samMaintenance' }
-                    ]
-                },
-                {
-                    message: "Sam: 'That new hoodie looks good on you, Jo. Trent's Drains style!'",
-                    choices: [
-                        { text: 'Blush and thank her', action: 'samBlush' },
-                        { text: 'Make a joke about the uniform', action: 'samJoke' }
-                    ]
+        // Trigger HR tasks content
+        function triggerHRTask() {
+            bossSvg.classList.remove('hidden');
+            const scenario = getUniqueScenario('hr'); // Get unique HR scenario
+            if (!scenario) { // Fallback if no unique scenario
+                showModal('The line is busy... (No new HR tasks)', [{ text: 'OK', action: 'callEnd' }]);
+                return;
+            }
+            showModal(scenario.message, scenario.choices);
+        }
+
+        // Trigger personal calls content
+        function triggerPersonalCall(type) { // Pass the type of call (guaranteed or random)
+            let scenario = null;
+            if (type === 'personal_call_asia_guarantee') {
+                scenario = getUniqueScenario('asia');
+                if (scenario) asiaCallsMade++;
+            } else if (type === 'personal_call_henryk_guarantee') {
+                scenario = getUniqueScenario('henryk');
+                if (scenario) henrykCallsMade++;
+            } else { // Generic 'personal_call' if no specific guarantee
+                const personalCallSubtypeRoll = Math.random();
+                if (personalCallSubtypeRoll < 0.7 && currentAsiaScenarios.length > 0) { // 70% Asia if scenarios exist
+                    scenario = getUniqueScenario('asia');
+                } else if (currentHenrykScenarios.length > 0) { // Else try Henryk if scenarios exist
+                    scenario = getUniqueScenario('henryk');
+                } else if (currentAsiaScenarios.length > 0) { // Fallback to Asia if Henryk exhausted
+                    scenario = getUniqueScenario('asia');
+                } else { // All personal scenarios exhausted
+                     showModal('The personal line is quiet... for now.', [{ text: 'OK', action: 'callEnd' }]);
+                     return;
                 }
-            ];
-            const randomDialogue = dialogue[Math.floor(Math.random() * dialogue.length)];
-            showModal(randomDialogue.message, randomDialogue.choices);
+
+                // If a scenario is found, increment its counter for general calls
+                if (scenario && scenario.type && ['supermarket', 'wine', 'chocolate', 'flowers', 'dishes', 'school_pickup', 'dry_cleaning', 'bin_day'].includes(scenario.type)) {
+                     asiaCallsMade++;
+                } else if (scenario && scenario.type && ['crayons', 'talkingBack', 'refusingLunch', 'runningInHalls'].includes(scenario.type)) {
+                    henrykCallsMade++;
+                }
+            }
+
+            if (!scenario) { // If no scenario found after all logic
+                showModal('The personal line is quiet... for now.', [{ text: 'OK', action: 'callEnd' }]);
+                return;
+            }
+
+            if (scenario.type && ['supermarket', 'wine', 'chocolate', 'flowers', 'dishes', 'school_pickup', 'dry_cleaning', 'bin_day'].includes(scenario.type)) {
+                handleAsiaRequest(scenario);
+            } else if (scenario.type && ['crayons', 'talkingBack', 'refusingLunch', 'runningInHalls'].includes(scenario.type)) {
+                handleHenrykMisbehavior(scenario);
+            } else {
+                 // Generic fallback if scenario type is not recognized (shouldn't happen with proper data)
+                showModal('A quiet moment on the personal line.', [{ text: 'OK', action: 'callEnd' }]);
+            }
         }
 
-        function handleLibbyInteraction() {
-            playSexyMusic(); // Play sexy music
-            const dialogue = [
-                {
-                    message: "Libby: 'Hey Jo. Just admiring your concentration over there. What are you working on?'",
-                    choices: [
-                        { text: 'Explain your work passionately', action: 'libbyWorkExplain' },
-                        { text: 'Give a brief, humble answer', action: 'libbyWorkBrief' }
-                    ]
-                },
-                {
-                    message: "Libby: 'I'm thinking of grabbing lunch, Jo. Anything good around Cater Road?'",
-                    choices: [
-                        { text: 'Suggest a good spot', action: 'libbyLunchSuggest' },
-                        { text: 'Say you haven\'t thought about lunch', action: 'libbyLunchNoIdea' }
-                    ]
-                },
-                {
-                    message: "Libby: 'This music is terrible today. Got any recommendations?'",
-                    choices: [
-                        { text: 'Suggest your favourite band', action: 'libbyMusicBand' },
-                        { text: 'Say you only listen to drain sounds', action: 'libbyMusicDrain' }
-                    ]
-                }
-            ];
-            const randomDialogue = dialogue[Math.floor(Math.random() * dialogue.length)];
-            showModal(randomDialogue.message, randomDialogue.choices);
+
+        function handleAsiaRequest(scenario) { // Now receives a specific scenario
+            showModal(scenario.message, scenario.choices);
         }
+
+        function handleHenrykMisbehavior(scenario) { // Now receives a specific scenario
+            showModal(scenario.message, scenario.choices);
+        }
+
+        // Common actions after any type of call/interaction (modal action `callEnd`)
+        function afterCallOrInteraction() {
+            bossSvg.classList.add('hidden');
+            goToScene('desk'); // Always return to desk after call/interaction
+            updateUI();
+            playMainMusic();
+            clearTimeout(callSchedulingTimeout); // Clear previous timeout
+            scheduleNextCall(); // Schedule next call immediately
+        }
+
+        function handlePhoneReplyLewisGoodOutcome() { score += 15; bossPressure = Math.min(100, bossPressure - 10); time = Math.max(0, time - 3); showModal('Lewis seems satisfied. For now.', [{ text: 'OK', action: 'callEnd' }]); }
+        function handlePhoneReplyLewisBadOutcome() { score = Math.max(0, score - 10); bossPressure = Math.min(100, bossPressure + 10); time = Math.max(0, time - 3); showModal('Lewis is not happy. Your pressure increased!', [{ text: 'OK', action: 'callEnd' }]); }
+        function handlePhoneReplyMarkGoodOutcome() { score += 10; bossPressure = Math.min(100, bossPressure - 7); time = Math.max(0, time - 2); showModal('Mark sounds approving. Good job.', [{ text: 'OK', action: 'callEnd' }]); }
+        function handlePhoneReplyMarkBadOutcome() { score = Math.max(0, score - 5); bossPressure = Math.min(100, bossPressure + 7); time = Math.max(0, time - 2); showModal('Mark sighs. You feel the pressure rising.', [{ text: 'OK', action: 'callEnd' }]); }
+        function handlePhoneReplyRossGoodOutcome() { score += 5; bossPressure = Math.min(100, bossPressure - 3); time = Math.max(0, time - 1); showModal('Ross grunts. That means he\'s content.', [{ text: 'OK', action: 'callEnd' }]); }
+        function handlePhoneReplyRossBadOutcome() { score = Math.max(0, score - 3); bossPressure = Math.min(100, bossPressure + 3); time = Math.max(0, time - 1); showModal('Ross snorts. He\'ll be watching you.', [{ text: 'OK', action: 'callEnd' }]); }
+
+        function hrSackMeganDoItOutcome() { score = Math.max(0, score - 20); bossPressure = Math.min(100, bossPressure - 20); showModal('Megan Friday has been terminated. Ross seemed pleased, but you feel a pang of guilt.', [{ text: 'OK', action: 'callEnd' }]); }
+        function hrSackMeganHelpOutcome() { time = Math.max(0, time - 12); if (Math.random() < 0.3) { score += 30; bossPressure = Math.min(100, bossPressure - 10); showModal('You managed to get Megan a second chance with a new role! Bosses are grudgingly impressed.', [{ text: 'OK', action: 'callEnd' }]); } else { bossPressure = Math.min(100, bossPressure + 25); score = Math.max(0, score - 25); showModal('Your attempt to help Megan failed. She\'s gone, and the bosses are furious about your insubordination.', [{ text: 'OK', action: 'callEnd' }]); } }
+        function hrSackMeganRefuseOutcome() { bossPressure = Math.min(100, bossPressure + 40); score = Math.max(0, score - 50); showModal('You refused to sack Megan! Ross is livid. Your job is on the line!', [{ text: 'OK', action: 'callEnd' }]); }
+
+        function hrDecreaseKirstyDoItOutcome() { score = Math.max(0, score - 15); bossPressure = Math.min(100, bossPressure - 15); showModal('Kirsty\'s wages have been decreased. Mark is satisfied with your decisive action.', [{ text: 'OK', action: 'callEnd' }]); }
+        function hrDecreaseKirstySuggestOutcome() { time = Math.max(0, time - 8); if (Math.random() < 0.5) { score += 20; bossPressure = Math.min(100, bossPressure - 5); showModal('Mark considered your alternatives and found them acceptable. Well played!', [{ text: 'OK', action: 'callEnd' }]); } else { bossPressure = Math.min(100, bossPressure + 15); score = Math.max(0, score - 10); showModal('Mark dismissed your suggestions. Kirsty\'s wages are still cut, and you wasted time.', [{ text: 'OK', action: 'callEnd' }]); } }
+        function hrDecreaseKirstyRefuseOutcome() { bossPressure = Math.min(100, bossPressure + 30); score = Math.max(0, score - 35); showModal('You refused to cut Kirsty\'s wages. Mark is deeply displeased.', [{ text: 'OK', action: 'callEnd' }]); }
+
+        function hrFailProbationDoItOutcome() { score = Math.max(0, score - 10); bossPressure = Math.min(100, bossPressure - 10); showModal('The new starter\'s probation has been failed. Lewis approves of your efficiency.', [{ text: 'OK', action: 'callEnd' }]); }
+        function hrFailProbationChanceOutcome() { time = Math.max(0, time - 6); if (Math.random() < 0.4) { score += 25; bossPressure = Math.min(100, bossPressure + 5); showModal('You gave the new starter another chance, and they\'ve shown improvement! Lewis is surprised but accepts it.', [{ text: 'OK', action: 'callEnd' }]); } else { bossPressure = Math.min(100, bossPressure + 20); score = Math.max(0, score - 15); showModal('Your leniency backfired; the new starter still isn\'t working out. Lewis is annoyed.', [{ text: 'OK', action: 'callEnd' }]); } }
+        function hrFailProbationRefuseOutcome() { bossPressure = Math.min(100, bossPressure + 35); score = Math.max(0, score - 40); showModal('You refused to fail the probation! Lewis sees this as a direct challenge.', [{ text: 'OK', action: 'callEnd' }]); }
 
         // Sam interaction outcomes
-        function samHelp() {
-            samAttention = Math.min(100, samAttention + 15);
-            time = Math.max(0, time - 8); // Time cost for help - SLIGHTLY REDUCED
-            bossPressure = Math.min(100, bossPressure + 3); // Pressure increase - SLIGHTLY REDUCED
-            showModal('Sam is grateful! But you lost some time.', [{ text: 'OK', action: 'interactionEnd' }]);
-        }
-        function samBusy() {
-            samAttention = Math.max(0, samAttention - 10);
-            showModal('Sam looks a little disappointed. Probably best to focus on work.', [{ text: 'OK', action: 'interactionEnd' }]);
-        }
-        function samCoffee() {
-            samAttention = Math.min(100, samAttention + 20);
-            time = Math.max(0, time - 12); // Time cost for coffee - SLIGHTLY REDUCED
-            bossPressure = Math.min(100, bossPressure + 5); // Pressure increase - SLIGHTLY REDUCED
-            showModal('Sam smiles widely! It took a while though.', [{ text: 'OK', action: 'interactionEnd' }]);
-        }
-        function samMaintenance() {
-            samAttention = Math.max(0, samAttention - 5);
-            showModal('Sam shrugs. No points for you there.', [{ text: 'OK', action: 'interactionEnd' }]);
-        }
-        function samBlush() {
-            samAttention = Math.min(100, samAttention + 10);
-            showModal('Sam giggles. Progress!', [{ text: 'OK', action: 'interactionEnd' }]);
-        }
-        function samJoke() {
-            samAttention = Math.max(0, samAttention - 5);
-            showModal('Sam rolls her eyes. Maybe not the best joke.', [{ text: 'OK', action: 'interactionEnd' }]);
-        }
+        function samPrinterFlirtOutcome() { samAttention = Math.min(100, samAttention + 18); time = Math.max(0, time - 8); bossPressure = Math.min(100, bossPressure + 3); showModal('Sam giggles. Printer fixed, and you\'re in her good books.', [{ text: 'OK', action: 'callEnd' }]); }
+        function samMondaySympathyOutcome() { samAttention = Math.min(100, samAttention + 12); time = Math.max(0, time - 4); showModal('Sam smiles, appreciating the shared sentiment. A moment of connection.', [{ text: 'OK', action: 'callEnd' }]); }
+        function samOfferHoodieOutcome() { samAttention = Math.min(100, samAttention + 25); time = Math.max(0, time - 10); bossPressure = Math.min(100, bossPressure + 5); showModal('Sam blushes slightly, taking your hoodie. You feel like a hero, but time is ticking.', [{ text: 'OK', action: 'callEnd' }]); }
+        function samExplainSmileOutcome() { samAttention = Math.min(100, samAttention + 10); time = Math.max(0, time - 4); showModal('Sam seems genuinely interested. Nice job.', [{ text: 'OK', action: 'callEnd' }]); }
+        function samBusyOutcome() { samAttention = Math.max(0, samAttention - 10); showModal('Sam looks a little disappointed. Probably best to focus on work.', [{ text: 'OK', action: 'callEnd' }]); }
+        function samProfessionalOutcome() { samAttention = Math.max(0, samAttention - 5); showModal('Sam nods, but the moment is lost. Stick to work, Jo.', [{ text: 'OK', action: 'callEnd' }]); }
+        function samJumperOutcome() { samAttention = Math.max(0, samAttention - 15); showModal('Sam rolls her eyes. That was not helpful, Jo.', [{ text: 'OK', action: 'callEnd' }]); }
+        function samSeriousOutcome() { samAttention = Math.max(0, samAttention - 7); showModal('Sam\'s interest quickly fades. Maybe lighten up a bit?', [{ text: 'OK', action: 'callEnd' }]); }
+        function samCoffeeInviteOutcome() { samAttention = Math.min(100, samAttention + 20); time = Math.max(0, time - 7); bossPressure = Math.min(100, bossPressure + 4); showModal('Sam is delighted! You might share a coffee, but work is still waiting.', [{ text: 'OK', action: 'callEnd' }]); }
+        function samCarHelpOutcome() { samAttention = Math.min(100, samAttention + 15); time = Math.max(0, time - 10); bossPressure = Math.min(100, bossPressure + 5); showModal('Sam appreciates your mechanical prowess! This boosts her attention.', [{ text: 'OK', action: 'callEnd' }]); }
+
 
         // Libby interaction outcomes
-        function libbyWorkExplain() {
-            libbyAttention = Math.min(100, libbyAttention + 10);
-            time = Math.max(0, time - 4); // Time cost - SLIGHTLY REDUCED
-            showModal('Libby seems impressed by your dedication.', [{ text: 'OK', action: 'interactionEnd' }]);
+        function handleLibbyInteraction() { // This is the initial call to show Libby's choices
+            playSexyMusic();
+            const scenario = getUniqueScenario('libby'); // Get unique Libby scenario
+            if (!scenario) {
+                showModal('Libby seems distracted, try again later!', [{ text: 'OK', action: 'callEnd' }]); // Fallback if no unique scenario
+                return;
+            }
+            showModal(scenario.message, scenario.choices);
         }
-        function libbyWorkBrief() {
-            libbyAttention = Math.max(0, libbyAttention - 5);
-            showModal('Libby nods, but her interest wanes.', [{ text: 'OK', action: 'interactionEnd' }]);
+        function libbyTechHeroOutcome() { libbyAttention = Math.min(100, libbyAttention + 20); time = Math.max(0, time - 10); bossPressure = Math.min(100, bossPressure + 4); showModal('Libby looks impressed by your skills. Mission accomplished!', [{ text: 'OK', action: 'callEnd' }]); }
+        function libbyLunchDateOutcome() { libbyAttention = Math.min(100, libbyAttention + 30); time = Math.max(0, time - 15); bossPressure = Math.min(100, bossPressure + 8); showModal('Libby\'s eyes light up! You\'ve potentially scored a lunch date, but at what cost to your time?', [{ text: 'OK', action: 'callEnd' }]); }
+        function libbySupportiveLookOutcome() { libbyAttention = Math.min(100, libbyAttention + 15); showModal('Libby gives a small, appreciative nod. You seem to understand.', [{ text: 'OK', action: 'callEnd' }]); }
+        function libbyFerrariJokeOutcome() { libbyAttention = Math.min(100, libbyAttention + 10); showModal('Libby chuckles. Good humor, Jo.', [{ text: 'OK', action: 'callEnd' }]); }
+        function libbyCallITOutcome() { libbyAttention = Math.max(0, libbyAttention - 10); showModal('Libby sighs. Not the knight in shining armor she hoped for.', [{ text: 'OK', action: 'callEnd' }]); }
+        function libbySandwichOutcome() { libbyAttention = Math.max(0, libbyAttention - 5); showModal('Libby nods dully. You missed an opportunity there.', [{ text: 'OK', action: 'callEnd' }]); }
+        function libbyGetUsedToItOutcome() { libbyAttention = Math.max(0, libbyAttention - 20); showModal('Libby gives you a flat look. That was not helpful advice, Jo.', [{ text: 'OK', action: 'callEnd' }]); }
+        function libbyFerrariSeriousOutcome() { libbyAttention = Math.max(0, libbyAttention - 7); showModal('Libby\'s eyes glaze over. Maybe she just wanted a laugh.', [{ text: 'OK', action: 'callEnd' }]); }
+        function libbyCoastSuggestOutcome() { libbyAttention = Math.min(100, libbyAttention + 25); time = Math.max(0, time - 10); bossPressure = Math.min(100, bossPressure + 6); showModal('Libby is intrigued! Your local knowledge impresses her.', [{ text: 'OK', action: 'callEnd' }]); }
+        function libbySoftwareHelpOutcome() { libbyAttention = Math.min(100, libbyAttention + 18); time = Math.max(0, time - 12); bossPressure = Math.min(100, bossPressure + 5); showModal('Libby is grateful for your patience and expertise!', [{ text: 'OK', action: 'callEnd' }]); }
+
+        // Asia Request Outcomes
+        function asiaComplySupermarketOutcome() { asiaHappiness = Math.min(100, asiaHappiness + 15); time = Math.max(0, time - 10); bossPressure = Math.min(100, bossPressure + 4); showModal('You agreed to the supermarket run. Asia is happy, but your work time took a hit.', [{ text: 'OK', action: 'callEnd' }]); }
+        function asiaDelaySupermarketOutcome() { asiaHappiness = Math.max(0, asiaHappiness - 10); showModal('Asia sounds annoyed. Her happiness decreased!', [{ text: 'OK', action: 'callEnd' }]); }
+        function asiaComplyWineOutcome() { asiaHappiness = Math.min(100, asiaHappiness + 10); time = Math.max(0, time - 5); showModal('Wine acquired. Asia will be pleased.', [{ text: 'OK', action: 'callEnd' }]); }
+        function asiaDelayWineOutcome() { asiaHappiness = Math.max(0, asiaHappiness - 5); showModal('Asia sighs. You feel a chill over the phone. Her happiness decreased!', [{ text: 'OK', action: 'callEnd' }]); }
+        function asiaComplyChocolateOutcome() { asiaHappiness = Math.min(100, asiaHappiness + 10); time = Math.max(0, time - 4); showModal('Chocolate secured. A quick win for marital bliss.', [{ text: 'OK', action: 'callEnd' }]); }
+        function asiaDelayChocolateOutcome() { asiaHappiness = Math.max(0, asiaHappiness - 5); showModal('Asia\'s tone is flat. No chocolate, no happiness. Her happiness decreased!', [{ text: 'OK', action: 'callEnd' }]); }
+        function asiaComplyFlowersOutcome() { asiaHappiness = Math.min(100, asiaHappiness + 20); time = Math.max(0, time - 8); bossPressure = Math.min(100, bossPressure + 2); showModal('Flowers secured. Big points with Asia, but it took time.', [{ text: 'OK', action: 'callEnd' }]); }
+        function asiaDelayFlowersOutcome() { asiaHappiness = Math.max(0, asiaHappiness - 15); showModal('Asia sounds very disappointed. This will require damage control. Her happiness decreased!', [{ text: 'OK', action: 'callEnd' }]); }
+        function asiaComplyDishesOutcome() { asiaHappiness = Math.min(100, asiaHappiness + 15); time = Math.max(0, time - 8); showModal('Dishes done... eventually. Asia is happy.', [{ text: 'OK', action: 'callEnd' }]); }
+        function asiaDelayDishesOutcome() { asiaHappiness = Math.max(0, asiaHappiness - 10); showModal('Asia sounds frustrated. Those dishes aren\'t going anywhere by themselves. Her happiness decreased!', [{ text: 'OK', action: 'callEnd' }]); }
+        function asiaComplySchoolPickupOutcome() { asiaHappiness = Math.min(100, asiaHappiness + 25); time = Math.max(0, time - 15); bossPressure = Math.min(100, bossPressure + 6); showModal('Henryk picked up. Asia is immensely relieved, but your work day is severely impacted.', [{ text: 'OK', action: 'callEnd' }]); }
+        function asiaDelaySchoolPickupOutcome() { asiaHappiness = Math.max(0, asiaHappiness - 20); bossPressure = Math.min(100, bossPressure + 5); showModal('Asia is stressed and annoyed. You\'ll pay for this later. Her happiness decreased!', [{ text: 'OK', action: 'callEnd' }]); }
+        function asiaComplyDryCleaningOutcome() { asiaHappiness = Math.min(100, asiaHappiness + 12); time = Math.max(0, time - 7); bossPressure = Math.min(100, bossPressure + 3); showModal('Dry cleaning picked up. Another chore off Asia\'s list.', [{ text: 'OK', action: 'callEnd' }]); }
+        function asiaDelayDryCleaningOutcome() { asiaHappiness = Math.max(0, asiaHappiness - 8); showModal('Asia sounds disappointed. Your clothes might stay wrinkled! Her happiness decreased!', [{ text: 'OK', action: 'callEnd' }]); }
+        function asiaComplyBinsOutcome() { asiaHappiness = Math.min(100, asiaHappiness + 5); showModal('Bins confirmed out. A small victory for household harmony.', [{ text: 'OK', action: 'callEnd' }]); }
+        function asiaDelayBinsOutcome() { asiaHappiness = Math.max(0, asiaHappiness - 10); showModal('Asia is annoyed. Prepare for overflowing bins! Her happiness decreased!', [{ text: 'OK', action: 'callEnd' }]); }
+
+        // Henryk Misbehavior Outcomes
+        function henrykGoToSchoolOutcome() {
+            score += 20;
+            time = Math.max(0, time - 20); // Reduced time cost
+            bossPressure = Math.min(100, bossPressure + 8); // Reduced boss pressure impact
+            asiaHappiness = Math.min(100, asiaHappiness + 10);
+            showModal('You went to the school and resolved Henryk\'s issue. It cost you time and stress, but his behavior might improve.', [{ text: 'OK', action: 'callEnd' }]);
         }
-        function libbyLunchSuggest() {
-            libbyAttention = Math.min(100, libbyAttention + 15);
-            time = Math.max(0, time - 6); // Time cost - SLIGHTLY REDUCED
-            showModal('Libby appreciates the suggestion. You might see her there!', [{ text: 'OK', action: 'interactionEnd' }]);
+        function henrykTalkLaterOutcome() {
+            score = Math.max(0, score - 5);
+            asiaHappiness = Math.max(0, asiaHappiness - 5);
+            if (Math.random() < 0.6) {
+                bossPressure = Math.min(100, bossPressure + 10);
+                showModal('You decided to talk to Henryk later. The school is mildly disappointed, and his behavior may worsen.', [{ text: 'OK', action: 'callEnd' }]);
+            } else {
+                showModal('You decided to talk to Henryk later. The school is mildly disappointed, but you gained some time.', [{ text: 'OK', action: 'callEnd' }]);
+            }
         }
-        function libbyLunchNoIdea() {
-            libbyAttention = Math.max(0, libbyAttention - 5);
-            showModal('Libby moves on. You missed a chance.', [{ text: 'OK', action: 'interactionEnd' }]);
-        }
-        function libbyMusicBand() {
-            libbyAttention = Math.min(100, libbyAttention + 10);
-            showModal('Libby is interested! You two might have similar tastes.', [{ text: 'OK', action: 'interactionEnd' }]);
-        }
-        function libbyMusicDrain() {
-            libbyAttention = Math.max(0, libbyAttention - 10);
-            showModal('Libby looks confused, then bored. Try harder next time.', [{ text: 'OK', action: 'interactionEnd' }]);
+        function henrykSchoolHandleOutcome() {
+            score = Math.max(0, score - 15);
+            bossPressure = Math.min(100, bossPressure + 15);
+            asiaHappiness = Math.max(0, asiaHappiness - 10);
+            showModal('You told the school to handle it. They\'re not happy, and your reputation as a parent might take a hit.', [{ text: 'OK', action: 'callEnd' }]);
         }
 
         // --- Modal Functions (instead of alert/confirm) ---
         function showModal(message, choices = [{ text: 'OK', action: 'ok' }]) {
             modalMessage.textContent = message;
-            modalChoices.innerHTML = '';
+            modalButtons.innerHTML = '';
             choices.forEach(choice => {
                 const button = document.createElement('button');
                 button.className = `modal-button ${choice.action === 'restart' ? 'cancel' : ''}`;
@@ -1032,7 +1393,7 @@
                 button.onclick = () => {
                     handleModalChoice(choice.action);
                 };
-                modalChoices.appendChild(button);
+                modalButtons.appendChild(button);
             });
             gameModal.classList.remove('hidden');
         }
@@ -1040,69 +1401,97 @@
         function closeModal() {
             gameModal.classList.add('hidden');
             modalMessage.textContent = '';
-            modalChoices.innerHTML = '';
+            modalButtons.innerHTML = '';
         }
 
         function handleModalChoice(action) {
-            closeModal();
+            closeModal(); // Always close modal first
             switch (action) {
-                case 'ok':
-                    // Do nothing, just close modal
-                    break;
-                case 'restart':
-                    initGame();
-                    break;
-                case 'answerBossCall':
-                    // This action is already triggering handlePhoneCall, no need to re-trigger currentScene
-                    // Phone ringing will stop and boss will appear within handlePhoneCall
-                    break;
-                case 'phoneCallEnd':
-                    afterPhoneCall(); // Hides boss, updates UI, resumes main music
-                    break;
-                case 'interactionEnd':
-                    goToScene('desk'); // Return to desk after social interaction
-                    updateUI();
-                    playMainMusic(); // Resume main music
-                    break;
-                // Add more cases for specific dialogue outcomes
-                case 'phoneReplyLewisGood': handlePhoneReplyLewisGood(); break;
-                case 'phoneReplyLewisBad': handlePhoneReplyLewisBad(); break;
-                case 'phoneReplyMarkGood': handlePhoneReplyMarkGood(); break;
-                case 'phoneReplyMarkBad': handlePhoneReplyMarkBad(); break;
-                case 'phoneReplyRossGood': handlePhoneReplyRossGood(); break;
-                case 'phoneReplyRossBad': handlePhoneReplyRossBad(); break;
-                case 'samHelp': samHelp(); break;
-                case 'samBusy': samBusy(); break;
-                case 'samCoffee': samCoffee(); break;
-                case 'samMaintenance': samMaintenance(); break;
-                case 'samBlush': samBlush(); break;
-                case 'samJoke': samJoke(); break;
-                case 'libbyWorkExplain': libbyWorkExplain(); break;
-                case 'libbyWorkBrief': libbyWorkBrief(); break;
-                case 'libbyLunchSuggest': libbyLunchSuggest(); break;
-                case 'libbyLunchNoIdea': libbyLunchNoIdea(); break;
-                case 'libbyMusicBand': libbyMusicBand(); break;
-                case 'libbyMusicDrain': libbyMusicDrain(); break;
+                case 'ok': break; // Simple OK, no further state change
+                case 'restart': initGame(); break;
+                case 'callEnd': afterCallOrInteraction(); break; // All interactions/calls end here
+
+                // Engineer specific actions (these trigger assignJobAction which then calls callEnd)
+                case 'jordanAssignedOutcome': jordanAssignedOutcome(); break;
+                case 'calumAssignedFirmlyOutcome': calumAssignedFirmlyOutcome(); break;
+                case 'calumAssignedGentlyOutcome': calumAssignedGentlyOutcome(); break;
+
+                // HR Task Outcomes (these update stats and then trigger callEnd)
+                case 'hrSackMeganDoItOutcome': hrSackMeganDoItOutcome(); break;
+                case 'hrSackMeganHelpOutcome': hrSackMeganHelpOutcome(); break;
+                case 'hrSackMeganRefuseOutcome': hrSackMeganRefuseOutcome(); break;
+                case 'hrDecreaseKirstyDoItOutcome': hrDecreaseKirstyDoItOutcome(); break;
+                case 'hrDecreaseKirstySuggestOutcome': hrDecreaseKirstySuggestOutcome(); break;
+                case 'hrDecreaseKirstyRefuseOutcome': hrDecreaseKirstyRefuseOutcome(); break;
+                case 'hrFailProbationDoItOutcome': hrFailProbationDoItOutcome(); break;
+                case 'hrFailProbationChanceOutcome': hrFailProbationChanceOutcome(); break;
+                case 'hrFailProbationRefuseOutcome': hrFailProbationRefuseOutcome(); break;
+
+                // Phone replies (from Bosses) (these update stats and then trigger callEnd)
+                case 'phoneReplyLewisGoodOutcome': handlePhoneReplyLewisGoodOutcome(); break;
+                case 'phoneReplyLewisBadOutcome': handlePhoneReplyLewisBadOutcome(); break;
+                case 'phoneReplyMarkGoodOutcome': handlePhoneReplyMarkGoodOutcome(); break;
+                case 'phoneReplyMarkBadOutcome': handlePhoneReplyMarkBadOutcome(); break;
+                case 'phoneReplyRossGoodOutcome': handlePhoneReplyRossGoodOutcome(); break;
+                case 'phoneReplyRossBadOutcome': handlePhoneReplyRossBadOutcome(); break;
+
+                // Sam interactions (these update stats and then trigger callEnd)
+                case 'samPrinterFlirtOutcome': samPrinterFlirtOutcome(); break;
+                case 'samMondaySympathyOutcome': samMondaySympathyOutcome(); break;
+                case 'samOfferHoodieOutcome': samOfferHoodieOutcome(); break;
+                case 'samExplainSmileOutcome': samExplainSmileOutcome(); break;
+                case 'samBusyOutcome': samBusyOutcome(); break;
+                case 'samProfessionalOutcome': samProfessionalOutcome(); break;
+                case 'samJumperOutcome': samJumperOutcome(); break;
+                case 'samSeriousOutcome': samSeriousOutcome(); break;
+                case 'samCoffeeInviteOutcome': samCoffeeInviteOutcome(); break;
+                case 'samCarHelpOutcome': samCarHelpOutcome(); break;
+
+                // Libby interactions (these update stats and then trigger callEnd)
+                case 'libbyTechHeroOutcome': libbyTechHeroOutcome(); break;
+                case 'libbyLunchDateOutcome': libbyLunchDateOutcome(); break;
+                case 'libbySupportiveLookOutcome': libbySupportiveLookOutcome(); break;
+                case 'libbyFerrariJokeOutcome': libbyFerrariJokeOutcome(); break;
+                case 'libbyCallITOutcome': libbyCallITOutcome(); break;
+                case 'libbySandwichOutcome': libbySandwichOutcome(); break;
+                case 'libbyGetUsedToItOutcome': libbyGetUsedToItOutcome(); break;
+                case 'libbyFerrariSeriousOutcome': libbyFerrariSeriousOutcome(); break;
+                case 'libbyCoastSuggestOutcome': libbyCoastSuggestOutcome(); break;
+                case 'libbySoftwareHelpOutcome': libbySoftwareHelpOutcome(); break;
+
+                // Asia interactions (these update stats and then trigger callEnd)
+                case 'asiaComplySupermarketOutcome': asiaComplySupermarketOutcome(); break;
+                case 'asiaDelaySupermarketOutcome': asiaDelaySupermarketOutcome(); break;
+                case 'asiaComplyWineOutcome': asiaComplyWineOutcome(); break;
+                case 'asiaDelayWineOutcome': asiaDelayWineOutcome(); break;
+                case 'asiaComplyChocolateOutcome': asiaComplyChocolateOutcome(); break;
+                case 'asiaDelayChocolateOutcome': asiaComplyChocolateOutcome(); break;
+                case 'asiaComplyFlowersOutcome': asiaComplyFlowersOutcome(); break;
+                case 'asiaDelayFlowersOutcome': asiaDelayFlowersOutcome(); break;
+                case 'asiaComplyDishesOutcome': asiaComplyDishesOutcome(); break;
+                case 'asiaDelayDishesOutcome': asiaComplyDishesOutcome(); break;
+                case 'asiaComplySchoolPickupOutcome': asiaComplySchoolPickupOutcome(); break;
+                case 'asiaDelaySchoolPickupOutcome': asiaDelaySchoolPickupOutcome(); break;
+                case 'asiaComplyDryCleaningOutcome': asiaComplyDryCleaningOutcome(); break;
+                case 'asiaDelayDryCleaningOutcome': asiaDelayDryCleaningOutcome(); break;
+                case 'asiaComplyBinsOutcome': asiaComplyBinsOutcome(); break;
+                case 'asiaDelayBinsOutcome': asiaDelayBinsOutcome(); break;
+
+
+                // Henryk interactions (these update stats and then trigger callEnd)
+                case 'henrykGoToSchoolOutcome': henrykGoToSchoolOutcome(); break;
+                case 'henrykTalkLaterOutcome': henrykTalkLaterOutcome(); break;
+                case 'henrykSchoolHandleOutcome': henrykSchoolHandleOutcome(); break;
             }
         }
 
         function goToScene(scene) {
             currentScene = scene;
-            updateOfficeScene();
+            updateOfficeScene(); // This re-renders UI based on the new scene
         }
 
-        function startPhoneRinging() {
-             // Only start ringing if not already ringing
-             if (!phoneRinging) {
-                phoneRinging = true;
-                updateUI();
-             }
-        }
-
-        // Start the game when the window loads
-        window.onload = initGame;
-
+        // On window load, show instructions
+        window.onload = showInstructions;
     </script>
 </body>
 </html>
-
