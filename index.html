@@ -1287,11 +1287,11 @@
         }
 
         function handlePhoneReplyLewisGoodOutcome() { score += 15; bossPressure = Math.min(100, bossPressure - 10); time = Math.max(0, time - 3); showModal('Lewis seems satisfied. For now.', [{ text: 'OK', action: 'callEnd' }]); }
-        function handlePhoneReplyLewisBadOutcome() { score = Math.max(0, score - 10); bossPressure = Math.min(100, bossPressure + 10); time = Math.max(0, time - 3); showModal('Lewis is not happy. Your pressure increased!', [{ text: 'OK', action: 'callEnd' }]); }
-        function handlePhoneReplyMarkGoodOutcome() { score += 10; bossPressure = Math.min(100, bossPressure - 7); time = Math.max(0, time - 2); showModal('Mark sounds approving. Good job.', [{ text: 'OK', action: 'callEnd' }]); }
-        function handlePhoneReplyMarkBadOutcome() { score = Math.max(0, score - 5); bossPressure = Math.min(100, bossPressure + 7); time = Math.max(0, time - 2); showModal('Mark sighs. You feel the pressure rising.', [{ text: 'OK', action: 'callEnd' }]); }
-        function handlePhoneReplyRossGoodOutcome() { score += 5; bossPressure = Math.min(100, bossPressure - 3); time = Math.max(0, time - 1); showModal('Ross grunts. That means he\'s content.', [{ text: 'OK', action: 'callEnd' }]); }
-        function handlePhoneReplyRossBadOutcome() { score = Math.max(0, score - 3); bossPressure = Math.min(100, bossPressure + 3); time = Math.max(0, time - 1); showModal('Ross snorts. He\'ll be watching you.', [{ text: 'OK', action: 'callEnd' }]); }
+        function phoneReplyLewisBadOutcome() { score = Math.max(0, score - 10); bossPressure = Math.min(100, bossPressure + 10); time = Math.max(0, time - 3); showModal('Lewis is not happy. Your pressure increased!', [{ text: 'OK', action: 'callEnd' }]); }
+        function phoneReplyMarkGoodOutcome() { score += 10; bossPressure = Math.min(100, bossPressure - 7); time = Math.max(0, time - 2); showModal('Mark sounds approving. Good job.', [{ text: 'OK', action: 'callEnd' }]); }
+        function phoneReplyMarkBadOutcome() { score = Math.max(0, score - 5); bossPressure = Math.min(100, bossPressure + 7); time = Math.max(0, time - 2); showModal('Mark sighs. You feel the pressure rising.', [{ text: 'OK', action: 'callEnd' }]); }
+        function phoneReplyRossGoodOutcome() { score += 5; bossPressure = Math.min(100, bossPressure - 3); time = Math.max(0, time - 1); showModal('Ross grunts. That means he\'s content.', [{ text: 'OK', action: 'callEnd' }]); }
+        function phoneReplyRossBadOutcome() { score = Math.max(0, score - 3); bossPressure = Math.min(100, bossPressure + 3); time = Math.max(0, time - 1); showModal('Ross snorts. He\'ll be watching you.', [{ text: 'OK', action: 'callEnd' }]); }
 
         function hrSackMeganDoItOutcome() { score = Math.max(0, score - 20); bossPressure = Math.min(100, bossPressure - 20); showModal('Megan Friday has been terminated. Ross seemed pleased, but you feel a pang of guilt.', [{ text: 'OK', action: 'callEnd' }]); }
         function hrSackMeganHelpOutcome() { time = Math.max(0, time - 12); if (Math.random() < 0.3) { score += 30; bossPressure = Math.min(100, bossPressure - 10); showModal('You managed to get Megan a second chance with a new role! Bosses are grudgingly impressed.', [{ text: 'OK', action: 'callEnd' }]); } else { bossPressure = Math.min(100, bossPressure + 25); score = Math.max(0, score - 25); showModal('Your attempt to help Megan failed. She\'s gone, and the bosses are furious about your insubordination.', [{ text: 'OK', action: 'callEnd' }]); } }
@@ -1467,7 +1467,7 @@
                 case 'asiaComplyChocolateOutcome': asiaComplyChocolateOutcome(); break;
                 case 'asiaDelayChocolateOutcome': asiaComplyChocolateOutcome(); break;
                 case 'asiaComplyFlowersOutcome': asiaComplyFlowersOutcome(); break;
-                case 'asiaDelayFlowersOutcome': asiaDelayFlowersOutcome(); break;
+                case 'asiaDelayFlowersOutcome': asiaComplyFlowersOutcome(); break;
                 case 'asiaComplyDishesOutcome': asiaComplyDishesOutcome(); break;
                 case 'asiaDelayDishesOutcome': asiaComplyDishesOutcome(); break;
                 case 'asiaComplySchoolPickupOutcome': asiaComplySchoolPickupOutcome(); break;
@@ -1492,6 +1492,3 @@
 
         // On window load, show instructions
         window.onload = showInstructions;
-    </script>
-</body>
-</html>
